@@ -9,7 +9,7 @@ class SectionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class COurseSerializer(serializers.ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
     sections = SectionSerializer(many=True, read_only=True)
 
     class Meta:
