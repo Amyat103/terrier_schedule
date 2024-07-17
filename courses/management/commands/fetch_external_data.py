@@ -4,7 +4,6 @@ import requests
 from django.core.management.base import BaseCommand
 from django.db import connection, connections, transaction
 from django.db.models import Case, When
-from models import Course
 from rest_framework import serializers
 from serializer import CourseSerializer, SectionSerializer
 
