@@ -46,7 +46,8 @@ class Command(BaseCommand):
             if course_data["id"] in existing_courses:
                 course = existing_courses[course_data["id"]]
                 for key, value in course_data.items():
-                    setattr(course, key, value)
+                    if key != "id":  # Skip the primary key
+                        setattr(course, key, value)
                 to_update.append(course)
             else:
                 to_create.append(Course(**course_data))
@@ -55,7 +56,9 @@ class Command(BaseCommand):
                 self.stdout.write(f"Processed {i}/{len(courses_data)} courses")
 
         Course.objects.bulk_create(to_create)
-        Course.objects.bulk_update(to_update, fields=courses_data[0].keys())
+        if to_update:
+            update_fields = [f for f in courses_data[0].keys() if f != "id"]
+            Course.objects.bulk_update(to_update, fields=update_fields)
         self.stdout.write(
             self.style.SUCCESS(
                 f"Created {len(to_create)} and updated {len(to_update)} courses"
@@ -72,7 +75,8 @@ class Command(BaseCommand):
             if section_data["id"] in existing_sections:
                 section = existing_sections[section_data["id"]]
                 for key, value in section_data.items():
-                    setattr(section, key, value)
+                    if key != "id":  # Skip the primary key
+                        setattr(section, key, value)
                 to_update.append(section)
             else:
                 to_create.append(Section(**section_data))
@@ -81,7 +85,9 @@ class Command(BaseCommand):
                 self.stdout.write(f"Processed {i}/{len(sections_data)} sections")
 
         Section.objects.bulk_create(to_create)
-        Section.objects.bulk_update(to_update, fields=sections_data[0].keys())
+        if to_update:
+            update_fields = [f for f in sections_data[0].keys() if f != "id"]
+            Section.objects.bulk_update(to_update, fields=update_fields)
         self.stdout.write(
             self.style.SUCCESS(
                 f"Created {len(to_create)} and updated {len(to_update)} sections"
