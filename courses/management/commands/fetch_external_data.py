@@ -1,14 +1,9 @@
 # fetch_external_data.py
-
-import requests
 from django.core.management.base import BaseCommand
 from django.db import connection, connections, transaction
-from django.db.models import Case, When
 from rest_framework import serializers
-from serializer import CourseSerializer, SectionSerializer
 
 from courses.models import Course, Section
-from courses.serializer import CourseSerializer, SectionSerializer
 
 
 class Command(BaseCommand):
@@ -41,27 +36,54 @@ class Command(BaseCommand):
 
         return courses, sections
 
-    def fetch_and_store_data(self):
-        with connection.cursor() as cursor:
-            try:
-                cursor.execute("SELECT * FROM courses_course")
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Failed to execute query: {e}"))
-                raise
-
     def update_courses(self, courses_data):
-        for course_data in courses_data:
-            Course.objects.update_or_create(id=course_data["id"], defaults=course_data)
-        course_ids = [data["id"] for data in courses_data]
-        courses = Course.objects.filter(id__in=course_ids)
+        self.stdout.write("Updating courses...")
+        existing_courses = {c.id: c for c in Course.objects.all()}
+        to_create = []
+        to_update = []
 
-        courses_dict = {course.id: course for course in courses}
-        updated_courses = []
-        for data in courses_data:
-            course = courses_dict.get(data["id"])
-            if course:
-                course.field1 = data["field1"]
-                course.field2 = data["field2"]
-                updated_courses.append(course)
+        for i, course_data in enumerate(courses_data, 1):
+            if course_data["id"] in existing_courses:
+                course = existing_courses[course_data["id"]]
+                for key, value in course_data.items():
+                    setattr(course, key, value)
+                to_update.append(course)
+            else:
+                to_create.append(Course(**course_data))
 
-        Course.objects.bulk_update(updated_courses, ["field1", "field2"])
+            if i % 1000 == 0:
+                self.stdout.write(f"Processed {i}/{len(courses_data)} courses")
+
+        Course.objects.bulk_create(to_create)
+        Course.objects.bulk_update(to_update, fields=courses_data[0].keys())
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Created {len(to_create)} and updated {len(to_update)} courses"
+            )
+        )
+
+    def update_sections(self, sections_data):
+        self.stdout.write("Updating sections...")
+        existing_sections = {s.id: s for s in Section.objects.all()}
+        to_create = []
+        to_update = []
+
+        for i, section_data in enumerate(sections_data, 1):
+            if section_data["id"] in existing_sections:
+                section = existing_sections[section_data["id"]]
+                for key, value in section_data.items():
+                    setattr(section, key, value)
+                to_update.append(section)
+            else:
+                to_create.append(Section(**section_data))
+
+            if i % 1000 == 0:
+                self.stdout.write(f"Processed {i}/{len(sections_data)} sections")
+
+        Section.objects.bulk_create(to_create)
+        Section.objects.bulk_update(to_update, fields=sections_data[0].keys())
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Created {len(to_create)} and updated {len(to_update)} sections"
+            )
+        )
