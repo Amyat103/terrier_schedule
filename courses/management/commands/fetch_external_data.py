@@ -72,6 +72,11 @@ class Command(BaseCommand):
         to_update = []
 
         for i, section_data in enumerate(sections_data, 1):
+            # Handle null or "TBA" values
+            for field in ["start_time", "end_time"]:
+                if section_data.get(field) in [None, "TBA", ""]:
+                    section_data[field] = None
+
             if section_data["id"] in existing_sections:
                 section = existing_sections[section_data["id"]]
                 for key, value in section_data.items():

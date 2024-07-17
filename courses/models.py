@@ -27,8 +27,8 @@ class Section(models.Model):
     enrollment_total = models.IntegerField()
     enrollment_available = models.IntegerField()
     days = models.CharField(max_length=50)
-    start_time = models.CharField(max_length=50)
-    end_time = models.CharField(max_length=50)
+    start_time = models.CharField(max_length=50, null=True, blank=True)
+    end_time = models.CharField(max_length=50, null=True, blank=True)
     location = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
 
