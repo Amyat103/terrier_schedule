@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Schedule</title>
+  </head>
+  <body>
+    <h1>Course Schedule</h1>
+    <h2>Courses:</h2>
+    <ul>
+      {% for course in courses %}
+      <li>{{ course.short_title }} - {{ course.full_title }}</li>
+      {% endfor %}
+    </ul>
+
+    <h2>Sections:</h2>
+    <ul>
+      {% for section in sections %}
+      <li>{{ section.class_section }} - {{ section.professor_name }}</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

@@ -34,3 +34,15 @@ class Section(models.Model):
 
     def __str__(self):
         return f"{self.course.short_title} - Section {self.class_section}"
+
+
+class StoredCourse(models.Model):
+    course_id = models.IntegerField(unique=True)
+    data = models.JSONField()
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+class StoredSection(models.Model):
+    section_id = models.IntegerField(unique=True)
+    data = models.JSONField()
+    last_updated = models.DateTimeField(auto_now=True)

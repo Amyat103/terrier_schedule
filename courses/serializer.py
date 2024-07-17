@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from .models import Course, Section
+from .models import Course, Section, StoredCourse, StoredSection
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = "__all__"
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -9,9 +15,13 @@ class SectionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CourseSerializer(serializers.ModelSerializer):
-    sections = SectionSerializer(many=True, read_only=True)
-
+class StoredCourseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Course
+        model = StoredCourse
+        fields = "__all__"
+
+
+class StoredSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StoredSection
         fields = "__all__"

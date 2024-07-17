@@ -13,12 +13,21 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Initialize environ
+env = environ.Env()
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+# Add these debug prints
+print("BASE_DIR:", BASE_DIR)
+print("Env file path:", os.path.join(BASE_DIR, ".env"))
+print("LOCAL_PASS from env:", env("LOCAL_PASS"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -83,13 +92,30 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
+        "NAME": "local_terrier_schedule",
+        "USER": "postgres",
+        "PASSWORD": os.getenv("LOCAL_PASS"),
+        "HOST": "localhost",
+        "PORT": "5432",
+    },
+    "online": {
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("PGDATABASE"),
         "USER": os.getenv("PGUSER"),
         "PASSWORD": os.getenv("PGPASSWORD"),
         "HOST": os.getenv("PGHOST"),
         "PORT": os.getenv("PGPORT"),
-    }
+    },
 }
+
+
+print(
+    "DATABASE configurations:",
+    {k: {**v, "PASSWORD": "********"} for k, v in DATABASES.items()},
+)
+print("LOCAL_PASS:", env("LOCAL_PASS"))
+print("DATABASE configurations:", DATABASES)
+print("Database password:", env("LOCAL_PASS"))
 
 
 # Password validation
@@ -132,3 +158,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+print(
+    "DATABASE configurations:",
+    {k: {**v, "PASSWORD": "********"} for k, v in DATABASES.items()},
+)
+print("LOCAL_PASS:", env("LOCAL_PASS"))
