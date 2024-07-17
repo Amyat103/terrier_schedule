@@ -13,33 +13,28 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialize environ
-env = environ.Env()
+env = environ.Env(DEBUG=(bool, False))
 
-# Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
-
-# Add these debug prints
-print("BASE_DIR:", BASE_DIR)
-print("Env file path:", os.path.join(BASE_DIR, ".env"))
-print("LOCAL_PASS from env:", env("LOCAL_PASS"))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-du!es$w2_ir$^!fchhov^irh)ln506z_u*@a&(_lyzl^uq1q*r"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
@@ -91,12 +86,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "local_terrier_schedule",
-        "USER": "postgres",
-        "PASSWORD": os.getenv("LOCAL_PASS"),
-        "HOST": "localhost",
-        "PORT": "5432",
+        dj_database_url.config(
+            default=env("DATABASE_URL"),
+            conn_max_age=600,
+        )
     },
     "online": {
         "ENGINE": "django.db.backends.postgresql",
@@ -107,15 +100,6 @@ DATABASES = {
         "PORT": os.getenv("PGPORT"),
     },
 }
-
-
-print(
-    "DATABASE configurations:",
-    {k: {**v, "PASSWORD": "********"} for k, v in DATABASES.items()},
-)
-print("LOCAL_PASS:", env("LOCAL_PASS"))
-print("DATABASE configurations:", DATABASES)
-print("Database password:", env("LOCAL_PASS"))
 
 
 # Password validation
@@ -158,10 +142,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-print(
-    "DATABASE configurations:",
-    {k: {**v, "PASSWORD": "********"} for k, v in DATABASES.items()},
-)
-print("LOCAL_PASS:", env("LOCAL_PASS"))
