@@ -32,10 +32,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
-
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".railway.app"])
 
 # Application definition
 
@@ -85,12 +84,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        dj_database_url.config(
-            default=env("DATABASE_URL"),
-            conn_max_age=600,
-        )
-    },
+    "default": dj_database_url.config(
+        default=env("DATABASE_URL"),
+        conn_max_age=600,
+    ),
     "online": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("PGDATABASE"),
@@ -137,6 +134,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
