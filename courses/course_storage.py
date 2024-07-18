@@ -58,9 +58,10 @@ class CourseStorage:
     def get_courses(cls):
         try:
             courses = StoredCourse.objects.all()
+            print(f"Fetched {courses.count()} courses from StoredCourse")
             return [course.data for course in courses]
         except Exception as e:
-            logger.error(f"Error fetching courses: {str(e)}")
+            print(f"Error fetching courses: {str(e)}") 
             return []
 
     @staticmethod
