@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection, connections, transaction
 from rest_framework import serializers
 from courses.models import Course, Section, StoredCourse, StoredSection
+from tqdm import tqdm
 
 
 from courses.models import Course, Section
