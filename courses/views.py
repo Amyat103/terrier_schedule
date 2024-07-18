@@ -20,7 +20,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         logger.info("CourseViewSet.list called")
-        print("CourseViewSet.list called")
+        logger.info(f"Retrieved {len(courses)} courses from StoredCourse")
         courses = CourseStorage.get_courses()
         serializer = CourseSerializer(courses, many=True)
         logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
