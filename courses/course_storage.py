@@ -55,10 +55,13 @@ class CourseStorage:
         print(f"Stored {len(sections)} sections")
 
     @staticmethod
-    def get_courses():
-        courses = [course.data for course in StoredCourse.objects.all()]
-        print(f"Retrieved {len(courses)} courses from StoredCourse")
-        return courses
+    def get_courses(cls):
+        try:
+            courses = StoredCourse.objects.all()
+            return [course.data for course in courses]
+        except Exception as e:
+            logger.error(f"Error fetching courses: {str(e)}")
+            return []
 
     @staticmethod
     def get_sections():

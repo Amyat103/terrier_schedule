@@ -20,11 +20,15 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         logger.info("CourseViewSet.list called")
-        logger.info(f"Retrieved {len(courses)} courses from StoredCourse")
-        courses = CourseStorage.get_courses()
-        serializer = CourseSerializer(courses, many=True)
-        logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            courses = CourseStorage.get_courses()
+            logger.info(f"Retrieved {len(courses)} courses from StoredCourse")
+            serializer = CourseSerializer(courses, many=True)
+            logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error in CourseViewSet.list: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_queryset(self):
         queryset = Course.objects.all()
