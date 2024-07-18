@@ -18,6 +18,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+from courses.views import debug_view
+
 
 from courses.views import CourseViewSet, SectionViewSet, course_schedule_view
 
@@ -30,5 +32,4 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("schedule/", course_schedule_view, name="course_schedule"),
     path('api/debug/', debug_view, name='debug_view'),
-
 ]

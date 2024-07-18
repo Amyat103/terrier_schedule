@@ -6,6 +6,10 @@ console.log('Fetching from URL:', `${API_URL}/courses/`);
 const response = await axios.get(`${API_URL}/courses/`);
 console.log('Full Response:', response);
 
+console.log('API_URL:', API_URL);
+console.log('Fetching courses from:', `${API_URL}/courses/`);
+console.log('Full Response:', response);
+
 export const fetchCourses = async () => {
   try {
     const response = await axios.get(`${API_URL}/courses/`);
