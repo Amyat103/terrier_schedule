@@ -50,3 +50,8 @@ def course_schedule_view(request):
     }
     print(f"Fetched {courses.count()} courses and {sections.count()} sections")
     return render(request, "courses/schedule.html", context)
+
+from django.http import JsonResponse
+
+def debug_view(request):
+    return JsonResponse({"message": "Debug view working"})

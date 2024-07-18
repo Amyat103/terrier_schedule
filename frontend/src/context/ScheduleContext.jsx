@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { fetchCourses, fetchSections } from '../api/courseApi';
+import { fetchCourses, fetchSections } from '../api/course_fetch';
 
 const ScheduleContext = createContext();
 
@@ -20,7 +20,8 @@ function ScheduleProvider({ children }) {
         setSections(sectionsData);
         setLoading(false);
       } catch (err) {
-        setError('Cant load data in ScheduleContext.jsx');
+        console.error('Error in ScheduleContext:', err);
+        setError(err.message || 'Failed to load data');
         setLoading(false);
       }
     };
@@ -34,4 +35,5 @@ function ScheduleProvider({ children }) {
   );
 }
 
+export const useSchedule = () => useContext(ScheduleContext);
 export default ScheduleProvider;

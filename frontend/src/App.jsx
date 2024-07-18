@@ -1,7 +1,20 @@
 import React from 'react';
 import CourseList from './components/CourseList';
+import { useSchedule } from './context/ScheduleContext';
 
 function App() {
+  const { loading, error } = useSchedule();
+
+  console.log('App render - loading:', loading, 'error:', error);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className='App'>
       <header className='bg-blue-600 text-white p-4'>

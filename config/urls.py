@@ -29,4 +29,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("schedule/", course_schedule_view, name="course_schedule"),
+    path('api/debug/', debug_view, name='debug_view'),
+
 ]
