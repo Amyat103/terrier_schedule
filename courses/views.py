@@ -7,6 +7,9 @@ from .course_storage import CourseStorage
 from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
 from django.http import JsonResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -15,10 +18,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CourseSerializer
 
     def list(self, request, *args, **kwargs):
+        logger.info("CourseViewSet.list called")
         print("CourseViewSet.list called")
         courses = CourseStorage.get_courses()
         serializer = CourseSerializer(courses, many=True)
-        print(f"Returning {len(serializer.data)} courses from CourseViewSet")
+        logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_queryset(self):
@@ -34,10 +38,10 @@ class SectionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SectionSerializer
 
     def list(self, request, *args, **kwargs):
-        print("SectionViewSet.list called")
+        logger.info("SectionViewSet.list called")
         sections = CourseStorage.get_sections()
         serializer = SectionSerializer(sections, many=True)
-        print(f"Returning {len(serializer.data)} sections from SectionViewSet")
+        logger.info(f"Returning {len(serializer.data)} sections from SectionViewSet")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

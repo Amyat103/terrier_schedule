@@ -2,14 +2,11 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-console.log('Fetching from URL:', `${API_URL}/courses/`);
-const response = await axios.get(`${API_URL}/courses/`);
-console.log('Full Response:', response);
-
 export const fetchCourses = async () => {
   try {
+    console.log('Fetching courses from:', `${API_URL}/courses/`);
     const response = await axios.get(`${API_URL}/courses/`);
-    console.log('API Response:', response);
+    console.log('Courses API Response:', response);
     if (
       typeof response.data === 'string' &&
       response.data.includes('<!doctype html>')

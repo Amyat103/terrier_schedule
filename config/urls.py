@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+from django.http import HttpResponse
 from courses.views import debug_view
 
 
@@ -27,9 +28,13 @@ router = DefaultRouter()
 router.register(r"courses", CourseViewSet)
 router.register(r"sections", SectionViewSet)
 
+def catch_all(request):
+    return HttpResponse("Catch-all route hit", status=404)
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("schedule/", course_schedule_view, name="course_schedule"),
     path('api/debug/', debug_view, name='debug_view'),
+    path('', catch_all),
 ]
