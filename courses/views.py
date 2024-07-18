@@ -8,9 +8,10 @@ from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
 from django.http import JsonResponse
 import logging
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
-
 
 # Create your views here.
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
