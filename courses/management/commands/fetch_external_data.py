@@ -40,33 +40,42 @@ class Command(BaseCommand):
         return courses, sections
 
     def update_courses(self, courses):
-        self.stdout.write('Updating courses...')
-        existing_courses = {c.id: c for c in StoredCourse.objects.all()}
-        to_create = []
-        to_update = []
-        
         for course in tqdm(courses, total=len(courses)):
-            if course['id'] in existing_courses:
-                stored_course = existing_courses[course['id']]
-                stored_course.data = course
-                to_update.append(stored_course)
-            else:
-                to_create.append(StoredCourse(course_id=course['id'], data=course))
-            
-            if len(to_create) + len(to_update) >= 1000:
-                self.bulk_update_create(StoredCourse, to_create, to_update)
-                to_create = []
-                to_update = []
+            course_id = course.pop('id')
+            StoredCourse.objects.update_or_create(
+                course_id=course_id,
+                defaults={'data': course}
+            )
+
+
+    # old update course function
+    # def update_courses(self, courses):
+    #     self.stdout.write('Updating courses...')
+    #     existing_courses = {c.id: c for c in StoredCourse.objects.all()}
+    #     to_create = []
+    #     to_update = []
         
-        if to_create or to_update:
-            self.bulk_update_create(StoredCourse, to_create, to_update)
+    #     for course in tqdm(courses, total=len(courses)):
+    #         if course['id'] in existing_courses:
+    #             stored_course = existing_courses[course['id']]
+    #             stored_course.data = course
+    #             to_update.append(stored_course)
+    #         else:
+    #             to_create.append(StoredCourse(course_id=course['id'], data=course))
+            
+    #         if len(to_create) + len(to_update) >= 1000:
+    #             self.bulk_update_create(StoredCourse, to_create, to_update)
+    #             to_create = []
+    #             to_update = []
+        
+    #     if to_create or to_update:
+    #         self.bulk_update_create(StoredCourse, to_create, to_update)
 
     def update_sections(self, sections_data):
         logger.info("Updating sections...")
-        for section_data in sections_data:
-            section_id = section_data.get('section_id')
-            defaults = {k: v for k, v in section_data.items() if k != 'section_id'}
-            StoredSection.objects.update_or_create(section_id=section_id, defaults=defaults)
+        for section in sections_data:
+            section_id = section.pop('id')
+            StoredSection.objects.update_or_create(section_id=section_id, defaults={'data': section})
         logger.info("Sections updated successfully.")
 
 
