@@ -6,6 +6,9 @@ from rest_framework import serializers
 
 from .models import Course, Section, StoredCourse, StoredSection
 from .serializer import CourseSerializer, SectionSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CourseStorage:
@@ -54,14 +57,14 @@ class CourseStorage:
             StoredSection.objects.create(section_id=section["id"], data=section)
         print(f"Stored {len(sections)} sections")
 
-    @staticmethod
+    @classmethod
     def get_courses(cls):
         try:
             courses = StoredCourse.objects.all()
-            print(f"Fetched {courses.count()} courses from StoredCourse")
+            logger.info(f"Retrieved {courses.count()} courses from StoredCourse")
             return [course.data for course in courses]
         except Exception as e:
-            print(f"Error fetching courses: {str(e)}") 
+            logger.error(f"Error fetching courses: {str(e)}", exc_info=True)
             return []
 
     @staticmethod
