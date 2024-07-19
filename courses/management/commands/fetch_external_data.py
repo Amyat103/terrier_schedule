@@ -5,6 +5,7 @@ from rest_framework import serializers
 from courses.models import Course, Section, StoredCourse, StoredSection
 from tqdm import tqdm
 import logging
+import uuid
 
 logger = logging.getLogger(__name__)
 
