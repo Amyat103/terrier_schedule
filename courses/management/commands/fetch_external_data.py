@@ -46,7 +46,8 @@ class Command(BaseCommand):
         stored_courses = []
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop('id')
-            stored_courses.append(StoredCourse(course_id=str(course_id), data=course))  # Convert to string
+            uuid_id = uuid.uuid5(uuid.NAMESPACE_OID, str(course_id))
+            stored_courses.append(StoredCourse(course_id=uuid_id, data=course))
         
         with transaction.atomic():
             StoredCourse.objects.all().delete()
