@@ -17,13 +17,11 @@ class Command(BaseCommand):
     help = "Fetch and store data from external source"
 
     def handle(self, *args, **options):
-        self.stdout.write('Fetching data...')
+        print('Fetching data...')
         courses, sections = self.fetch_external_data()
         
         self.update_courses(courses)
         self.update_sections(sections)
-        
-        self.stdout.write(self.style.SUCCESS('Data fetch and store completed'))
 
     def fetch_external_data(self):
         with connections["online"].cursor() as cursor:
@@ -40,12 +38,15 @@ class Command(BaseCommand):
         return courses, sections
 
     def update_courses(self, courses):
+        self.stdout.write('Updating courses...')
+        stored_courses = []
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop('id')
-            StoredCourse.objects.update_or_create(
-                course_id=course_id,
-                defaults={'data': course}
-            )
+            stored_courses.append(StoredCourse(course_id=course_id, data=course))
+        
+        with transaction.atomic():
+            StoredCourse.objects.all().delete()
+            StoredCourse.objects.bulk_create(stored_courses, batch_size=1000)
 
 
     # old update course function
@@ -71,12 +72,16 @@ class Command(BaseCommand):
     #     if to_create or to_update:
     #         self.bulk_update_create(StoredCourse, to_create, to_update)
 
-    def update_sections(self, sections_data):
-        logger.info("Updating sections...")
-        for section in sections_data:
+    def update_sections(self, sections):
+        self.stdout.write('Updating sections...')
+        stored_sections = []
+        for section in tqdm(sections, total=len(sections)):
             section_id = section.pop('id')
-            StoredSection.objects.update_or_create(section_id=section_id, defaults={'data': section})
-        logger.info("Sections updated successfully.")
+            stored_sections.append(StoredSection(section_id=section_id, data=section))
+        
+        with transaction.atomic():
+            StoredSection.objects.all().delete()
+            StoredSection.objects.bulk_create(stored_sections, batch_size=1000)
 
 
     def bulk_update_create(self, model, to_create, to_update):
