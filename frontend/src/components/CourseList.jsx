@@ -1,23 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import CourseItem from './CourseItem';
 
 function CourseList() {
   const { courses, loading, error } = useSchedule();
   const [searchTerm, setSearchTerm] = useState('');
-
-  console.log(
-    'CourseList render - courses:',
-    courses,
-    'loading:',
-    loading,
-    'error:',
-    error
-  );
+  const [expandedCourseId, setExpandedCourseId] = useState(null);
 
   if (loading) return <div>Loading courses...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!Array.isArray(courses)) return <div>No courses available</div>;
 
   const filteredCourses = courses.filter(
     (course) =>
@@ -26,10 +17,9 @@ function CourseList() {
       course.short_title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (courses.length === 0) return <div>No courses available</div>;
-
-  if (loading) return <div className='text-center'>Loading courses...</div>;
-  if (error) return <div className='text-center text-red-500'>{error}</div>;
+  const handleExpand = (courseId) => {
+    setExpandedCourseId(expandedCourseId === courseId ? null : courseId);
+  };
 
   return (
     <div className='course-list'>
@@ -43,7 +33,14 @@ function CourseList() {
       />
       <div className='space-y-2'>
         {filteredCourses.map((course) => (
-          <CourseItem key={course.id} course={course} />
+          <CourseItem
+            key={course.id}
+            course={course}
+            isExpanded={expandedCourseId === course.id}
+            onExpand={() => {
+              handleExpand(course.id);
+            }}
+          />
         ))}
       </div>
     </div>
