@@ -23,7 +23,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             courses = CourseStorage.get_courses()
             logger.info(f"Retrieved {len(courses)} courses from StoredCourse")
-            serializer = CourseSerializer(courses, many=True)
+            serializer = self.get_serializer(courses, many=True)
             logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -44,8 +44,8 @@ class SectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         logger.info("SectionViewSet.list called")
-        sections = CourseStorage.get_sections()
-        serializer = SectionSerializer(sections, many=True)
+        sections = self.get_queryset()
+        serializer = self.get_serializer(sections, many=True)
         logger.info(f"Returning {len(serializer.data)} sections from SectionViewSet")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
