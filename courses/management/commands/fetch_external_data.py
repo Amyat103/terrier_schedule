@@ -4,7 +4,10 @@ from django.db import connection, connections, transaction
 from rest_framework import serializers
 from courses.models import Course, Section, StoredCourse, StoredSection
 from tqdm import tqdm
-import logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 
 from courses.models import Course, Section
