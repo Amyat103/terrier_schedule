@@ -26,26 +26,24 @@ class Command(BaseCommand):
         self.update_sections(sections)
 
     def fetch_external_data(self):
-        try:
-            with connections["online"].cursor() as cursor:
-                cursor.execute("SELECT * FROM courses")
-                columns = [col[0] for col in cursor.description]
-                courses = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                self.stdout.write(
-                    f"Fetched {len(courses)} courses from online database"
-                )
+        with connections["online"].cursor() as cursor:
+            cursor.execute("SELECT * FROM courses")
+            columns = [col[0] for col in cursor.description]
+            courses = [dict(zip(columns, row)) for row in cursor.fetchall()]
+            self.stdout.write(f"Fetched {len(courses)} courses from online database")
+            self.stdout.write(
+                f"Sample course: {courses[0] if courses else 'No courses'}"
+            )
 
-                cursor.execute("SELECT * FROM sections")
-                columns = [col[0] for col in cursor.description]
-                sections = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                self.stdout.write(
-                    f"Fetched {len(sections)} sections from online database"
-                )
+            cursor.execute("SELECT * FROM sections")
+            columns = [col[0] for col in cursor.description]
+            sections = [dict(zip(columns, row)) for row in cursor.fetchall()]
+            self.stdout.write(f"Fetched {len(sections)} sections from online database")
+            self.stdout.write(
+                f"Sample section: {sections[0] if sections else 'No sections'}"
+            )
 
-            return courses, sections
-        except Exception as e:
-            self.stderr.write(f"Error fetching data: {str(e)}")
-            return [], []
+        return courses, sections
 
     def update_courses(self, courses):
         self.stdout.write("Updating courses...")
@@ -73,29 +71,6 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Successfully updated {len(new_courses)} courses")
         )
 
-    # old update course function
-    # def update_courses(self, courses):
-    #     self.stdout.write('Updating courses...')
-    #     existing_courses = {c.id: c for c in StoredCourse.objects.all()}
-    #     to_create = []
-    #     to_update = []
-
-    #     for course in tqdm(courses, total=len(courses)):
-    #         if course['id'] in existing_courses:
-    #             stored_course = existing_courses[course['id']]
-    #             stored_course.data = course
-    #             to_update.append(stored_course)
-    #         else:
-    #             to_create.append(StoredCourse(course_id=course['id'], data=course))
-
-    #         if len(to_create) + len(to_update) >= 1000:
-    #             self.bulk_update_create(StoredCourse, to_create, to_update)
-    #             to_create = []
-    #             to_update = []
-
-    #     if to_create or to_update:
-    #         self.bulk_update_create(StoredCourse, to_create, to_update)
-
     def update_sections(self, sections):
         self.stdout.write("Updating sections...")
         stored_sections = []
@@ -112,6 +87,10 @@ class Command(BaseCommand):
                 )
             else:
                 skipped_sections += 1
+                if (
+                    skipped_sections <= 5
+                ):  # Print details for the first 5 skipped sections
+                    self.stdout.write(f"Skipped section: {section}")
 
         with transaction.atomic():
             StoredSection.objects.all().delete()
