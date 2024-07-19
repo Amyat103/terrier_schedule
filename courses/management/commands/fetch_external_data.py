@@ -24,25 +24,29 @@ class Command(BaseCommand):
         self.update_sections(sections)
 
     def fetch_external_data(self):
-        with connections["online"].cursor() as cursor:
-            cursor.execute("SELECT * FROM courses")
-            columns = [col[0] for col in cursor.description]
-            courses = [dict(zip(columns, row)) for row in cursor.fetchall()]
-            self.stdout.write(f"Fetched {len(courses)} courses from online database")
+        try:
+            with connections["online"].cursor() as cursor:
+                cursor.execute("SELECT * FROM courses")
+                columns = [col[0] for col in cursor.description]
+                courses = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                self.stdout.write(f"Fetched {len(courses)} courses from online database")
 
-            cursor.execute("SELECT * FROM sections")
-            columns = [col[0] for col in cursor.description]
-            sections = [dict(zip(columns, row)) for row in cursor.fetchall()]
-            self.stdout.write(f"Fetched {len(sections)} sections from online database")
+                cursor.execute("SELECT * FROM sections")
+                columns = [col[0] for col in cursor.description]
+                sections = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                self.stdout.write(f"Fetched {len(sections)} sections from online database")
 
-        return courses, sections
+            return courses, sections
+        except Exception as e:
+            self.stderr.write(f"Error fetching data: {str(e)}")
+            return [], []
 
     def update_courses(self, courses):
         self.stdout.write('Updating courses...')
         stored_courses = []
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop('id')
-            stored_courses.append(StoredCourse(course_id=course_id, data=course))
+            stored_courses.append(StoredCourse(course_id=str(course_id), data=course))  # Convert to string
         
         with transaction.atomic():
             StoredCourse.objects.all().delete()
