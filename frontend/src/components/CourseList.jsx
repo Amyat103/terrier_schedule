@@ -31,15 +31,13 @@ function CourseList() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <div className='space-y-2'>
-        {filteredCourses.map((course) => (
+      <div className='space-y-1'>
+        {filteredCourses.map((course, index) => (
           <CourseItem
-            key={course.id}
+            key={`${course.id}-${index}`}
             course={course}
             isExpanded={expandedCourseId === course.id}
-            onExpand={() => {
-              handleExpand(course.id);
-            }}
+            onExpand={() => handleExpand(course.id)}
           />
         ))}
       </div>

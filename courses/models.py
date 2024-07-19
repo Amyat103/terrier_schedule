@@ -20,7 +20,12 @@ class Course(models.Model):
 
 
 class Section(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="sections")
+    course = models.ForeignKey(
+            Course, 
+            on_delete=models.CASCADE, 
+            related_name="sections", 
+            to_field='course_id'
+        )    
     class_section = models.CharField(max_length=10)
     class_type = models.CharField(max_length=10)
     professor_name = models.CharField(max_length=100)

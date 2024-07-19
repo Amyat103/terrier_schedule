@@ -23,10 +23,10 @@ function App() {
         </h1>
       </header>
       <main className='container mx-auto mt-8 flex'>
-        <div className='w-1/3'>
+        <div className='w-2/3'>
           <CourseList />
         </div>
-        <div className='w-2/3 pl-8'>
+        <div className='w-1/3 pl-8'>
           <p className='text-xl'>Selected courses will appear here</p>
         </div>
       </main>

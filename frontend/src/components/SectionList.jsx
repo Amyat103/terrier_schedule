@@ -7,7 +7,7 @@ function SectionList({ courseId }) {
   const [expandedSectionId, setExpandedSectionId] = useState(null);
 
   const courseSections = sections.filter(
-    (section) => section.courseId === courseId
+    (section) => section.course_id === courseId
   );
 
   const handleExpand = (sectionId) => {
@@ -16,15 +16,14 @@ function SectionList({ courseId }) {
 
   return (
     <div className='section-list mt-2'>
-      <h4 className='font-medium mb-2'>Sections:</h4>
-      {courseSections.map((section) => {
+      {courseSections.map((section) => (
         <SectionItem
           key={section.id}
           section={section}
           isExpanded={expandedSectionId === section.id}
           onExpand={() => handleExpand(section.id)}
-        />;
-      })}
+        />
+      ))}
     </div>
   );
 }
