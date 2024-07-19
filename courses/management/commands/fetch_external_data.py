@@ -94,6 +94,7 @@ class Command(BaseCommand):
     def update_sections(self, sections):
         self.stdout.write('Updating sections...')
         
+        # Get all course ids
         course_ids = set(Course.objects.values_list('id', flat=True))
         
         new_sections = []
@@ -101,7 +102,8 @@ class Command(BaseCommand):
         for section_data in tqdm(sections, total=len(sections)):
             if section_data['course_id'] in course_ids:
                 section = Section(
-                    id=section_data['id'],  # Preserve original id
+                    id=section_data['id'],
+                    course_id=section_data['course_id'],  # Set course_id directly
                     class_section=section_data['class_section'],
                     class_type=section_data['class_type'],
                     professor_name=section_data['professor_name'],
@@ -121,18 +123,12 @@ class Command(BaseCommand):
         with transaction.atomic():
             Section.objects.all().delete()
             Section.objects.bulk_create(new_sections, batch_size=1000)
-            
-            with connection.cursor() as cursor:
-                cursor.execute('''
-                    UPDATE courses_section
-                    SET course_id = sections_data.course_id
-                    FROM (VALUES %s) AS sections_data(id, course_id)
-                    WHERE courses_section.id = sections_data.id
-                ''', [(s['id'], s['course_id']) for s in sections if s['id'] not in skipped_sections])
         
         self.stdout.write(self.style.SUCCESS(f'Successfully updated {len(new_sections)} sections'))
         if skipped_sections:
             self.stdout.write(self.style.WARNING(f'Skipped {len(skipped_sections)} sections due to missing courses'))
+
+            
 
     def bulk_update_create(self, model, to_create, to_update):
         with transaction.atomic():
