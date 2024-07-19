@@ -4,6 +4,7 @@ from django.db import connection, connections, transaction
 from rest_framework import serializers
 from courses.models import Course, Section, StoredCourse, StoredSection
 from tqdm import tqdm
+import logger
 
 
 from courses.models import Course, Section
@@ -57,27 +58,14 @@ class Command(BaseCommand):
         if to_create or to_update:
             self.bulk_update_create(StoredCourse, to_create, to_update)
 
-    def update_sections(self, sections):
-        self.stdout.write('Updating sections...')
-        existing_sections = {s.id: s for s in StoredSection.objects.all()}
-        to_create = []
-        to_update = []
-        
-        for section in tqdm(sections, total=len(sections)):
-            if section['id'] in existing_sections:
-                stored_section = existing_sections[section['id']]
-                stored_section.data = section
-                to_update.append(stored_section)
-            else:
-                to_create.append(StoredSection(section_id=section['id'], data=section))
-            
-            if len(to_create) + len(to_update) >= 1000:
-                self.bulk_update_create(StoredSection, to_create, to_update)
-                to_create = []
-                to_update = []
-        
-        if to_create or to_update:
-            self.bulk_update_create(StoredSection, to_create, to_update)
+    def update_sections(self, sections_data):
+        logger.info("Updating sections...")
+        for section_data in sections_data:
+            section_id = section_data.get('section_id')
+            defaults = {k: v for k, v in section_data.items() if k != 'section_id'}
+            StoredSection.objects.update_or_create(section_id=section_id, defaults=defaults)
+        logger.info("Sections updated successfully.")
+
 
     def bulk_update_create(self, model, to_create, to_update):
         with transaction.atomic():
