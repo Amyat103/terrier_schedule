@@ -2,23 +2,35 @@
 
 import django.db.models.deletion
 from django.db import migrations, models
+import uuid
 
+def gen_uuid(apps, schema_editor):
+    Course = apps.get_model('courses', 'Course')
+    for row in Course.objects.all():
+        row.course_id = uuid.uuid4()
+        row.save(update_fields=['course_id'])
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("courses", "0001_initial"),
+        ('courses', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="section",
-            name="course",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="sections",
-                to="courses.course",
-                to_field="course_id",
-            ),
+            model_name='course',
+            name='course_id',
+            field=models.CharField(max_length=36, unique=True, null=True),
+        ),
+        migrations.RunPython(gen_uuid),
+        migrations.AlterField(
+            model_name='course',
+            name='course_id',
+            field=models.UUIDField(default=uuid.uuid4, unique=True, editable=False),
+        ),
+        migrations.AlterField(
+            model_name='section',
+            name='course',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sections', to='courses.course', to_field='course_id'),
         ),
     ]
