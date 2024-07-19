@@ -1,8 +1,11 @@
 from django.db import models
+import uuid
 
 
 # Create your models here.
 class Course(models.Model):
+    course_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.AutoField(primary_key=True)
     term = models.CharField(max_length=20, null=True, blank=True)
     major = models.CharField(max_length=50)
     course_number = models.CharField(max_length=10)
@@ -17,9 +20,7 @@ class Course(models.Model):
 
 
 class Section(models.Model):
-    course = models.ForeignKey(
-        Course, related_name="sections", on_delete=models.CASCADE
-    )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="sections")
     class_section = models.CharField(max_length=10)
     class_type = models.CharField(max_length=10)
     professor_name = models.CharField(max_length=100)
@@ -37,7 +38,7 @@ class Section(models.Model):
 
 
 class StoredCourse(models.Model):
-    course_id = models.IntegerField(unique=True)
+    course_id = models.UUIDField(unique=True)
     data = models.JSONField()
     last_updated = models.DateTimeField(auto_now=True)
 

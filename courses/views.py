@@ -23,6 +23,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             courses = CourseStorage.get_courses()
             logger.info(f"Retrieved {len(courses)} courses from StoredCourse")
+            for course in courses[:5]:
+                logger.info(f"Sample course: {course}")
             serializer = self.get_serializer(courses, many=True)
             logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
             return Response(serializer.data, status=status.HTTP_200_OK)

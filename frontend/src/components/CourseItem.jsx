@@ -9,11 +9,8 @@ function CourseItem({ course }) {
       <h3 className='font-medium'>
         {course.major} {course.course_number}: {course.short_title}
       </h3>
-      <p>
-        Title: {course.full_title}
-        <br></br>
-        Description: {course.description}
-      </p>
+      <p>Title: {course.full_title}</p>
+      <p>Description: {course.description}</p>
     </div>
   );
 }
