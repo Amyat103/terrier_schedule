@@ -44,15 +44,28 @@ class Command(BaseCommand):
 
     def update_courses(self, courses):
         self.stdout.write('Updating courses...')
-        stored_courses = []
-        for course in tqdm(courses, total=len(courses)):
-            course_id = course.pop('id')
-            uuid_id = uuid.uuid5(uuid.NAMESPACE_OID, str(course_id))
-            stored_courses.append(StoredCourse(course_id=uuid_id, data=course))
+        new_courses = []
+        for course_data in tqdm(courses, total=len(courses)):
+            course = Course(
+                course_id=uuid.uuid4(),
+                id=course_data['id'],
+                term=course_data.get('term'),
+                major=course_data['major'],
+                course_number=course_data['course_number'],
+                short_title=course_data['short_title'],
+                full_title=course_data['full_title'],
+                description=course_data['description'],
+                has_details=course_data['has_details'],
+                is_registerable=course_data['is_registerable']
+            )
+            new_courses.append(course)
         
         with transaction.atomic():
-            StoredCourse.objects.all().delete()
-            StoredCourse.objects.bulk_create(stored_courses, batch_size=1000)
+            Course.objects.all().delete()
+            Course.objects.bulk_create(new_courses, batch_size=1000)
+        
+        self.stdout.write(self.style.SUCCESS(f'Successfully updated {len(new_courses)} courses'))
+
 
 
     # old update course function
@@ -80,14 +93,33 @@ class Command(BaseCommand):
 
     def update_sections(self, sections):
         self.stdout.write('Updating sections...')
-        stored_sections = []
-        for section in tqdm(sections, total=len(sections)):
-            section_id = section.pop('id')
-            stored_sections.append(StoredSection(section_id=section_id, data=section))
+        new_sections = []
+        for section_data in tqdm(sections, total=len(sections)):
+            try:
+                course = Course.objects.get(id=section_data['course_id'])
+                section = Section(
+                    course=course,
+                    class_section=section_data['class_section'],
+                    class_type=section_data['class_type'],
+                    professor_name=section_data['professor_name'],
+                    class_capacity=section_data['class_capacity'],
+                    enrollment_total=section_data['enrollment_total'],
+                    enrollment_available=section_data['enrollment_available'],
+                    days=section_data['days'],
+                    start_time=section_data['start_time'],
+                    end_time=section_data['end_time'],
+                    location=section_data['location'],
+                    is_active=section_data['is_active']
+                )
+                new_sections.append(section)
+            except Course.DoesNotExist:
+                self.stdout.write(self.style.WARNING(f"Course with id {section_data['course_id']} not found for section {section_data['class_section']}"))
         
         with transaction.atomic():
-            StoredSection.objects.all().delete()
-            StoredSection.objects.bulk_create(stored_sections, batch_size=1000)
+            Section.objects.all().delete()
+            Section.objects.bulk_create(new_sections, batch_size=1000)
+        
+        self.stdout.write(self.style.SUCCESS(f'Successfully updated {len(new_sections)} sections'))
 
 
     def bulk_update_create(self, model, to_create, to_update):
