@@ -16,13 +16,9 @@ from pathlib import Path
 import dj_database_url
 import environ
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Initialize environ
-# env = environ.Env(DEBUG=(bool, False))
-env = environ.Env(DEBUG=True)
-
+env = environ.Env(DEBUG=(bool, False))
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
@@ -37,6 +33,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".railway.app"])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS") + [".railway.app"]
 
 # Application definition
 
