@@ -42,6 +42,8 @@ export const fetchSections = async () => {
       return {};
     }
 
+    console.log('Raw sections data:', response.data.slice(0, 3)); // Log first 3 sections
+
     const sectionsByCourse = response.data.reduce((acc, section) => {
       if (!acc[section.course_id]) {
         acc[section.course_id] = [];
@@ -49,6 +51,16 @@ export const fetchSections = async () => {
       acc[section.course_id].push(section);
       return acc;
     }, {});
+
+    console.log(
+      'Organized sections (first 3 courses):',
+      Object.keys(sectionsByCourse)
+        .slice(0, 3)
+        .reduce((acc, key) => {
+          acc[key] = sectionsByCourse[key];
+          return acc;
+        }, {})
+    );
 
     return sectionsByCourse;
   } catch (error) {

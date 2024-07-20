@@ -1,27 +1,20 @@
 import React from 'react';
-import { useSchedule } from '../context/ScheduleContext';
-import SectionItem from './SectionItem';
 
-function SectionList({ courseId }) {
-  const { sections } = useSchedule();
-  const courseSections = sections[courseId] || [];
-
-  console.log('CourseId in SectionList:', courseId);
-  console.log('Sections for this course:', courseSections);
-
-  if (courseSections.length === 0) {
-    return <p>No sections available for this course.</p>;
-  }
-
+function SectionItem({ section }) {
   return (
-    <div className='section-list mt-2'>
-      <h4 className='font-medium mb-2'>Sections ({courseSections.length}):</h4>
-      {courseSections.map((section) => (
-        <SectionItem key={section.id} section={section} />
-      ))}
+    <div className='section-item p-2 border-b'>
+      <p>Section: {section.class_section}</p>
+      <p>Type: {section.class_type}</p>
+      <p>Professor: {section.professor_name}</p>
+      <p>
+        Time: {section.days} {section.start_time} - {section.end_time}
+      </p>
+      <p>Location: {section.location}</p>
+      <p>
+        Availability: {section.enrollment_available}/{section.class_capacity}
+      </p>
     </div>
   );
 }
 
-export const MemoizedSectionList = React.memo(SectionList);
-export default SectionList;
+export default SectionItem;
