@@ -48,11 +48,11 @@ class Command(BaseCommand):
     def update_courses(self, courses):
         self.stdout.write("Updating courses...")
         stored_courses = []
-        id_to_uuid = {}  # New dictionary to map integer IDs to UUIDs
+        id_to_uuid = {}
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop("id")
-            uuid_id = uuid.uuid4()  # Generate a new UUID
-            id_to_uuid[course_id] = uuid_id  # Store the mapping
+            uuid_id = uuid.uuid4()
+            id_to_uuid[course_id] = uuid_id
             stored_courses.append(StoredCourse(course_id=uuid_id, data=course))
 
         with transaction.atomic():
@@ -64,6 +64,10 @@ class Command(BaseCommand):
 
     def update_sections(self, sections, id_to_uuid):
         self.stdout.write("Updating sections...")
+
+        all_courses = Course.objects.all()
+        course_dict = {course.course_id: course for course in all_courses}
+
         new_sections = []
         skipped_sections = 0
 
@@ -72,8 +76,9 @@ class Command(BaseCommand):
 
             if course_id in id_to_uuid:
                 uuid_course_id = id_to_uuid[course_id]
-                try:
-                    course = Course.objects.get(course_id=uuid_course_id)
+                course = course_dict.get(uuid_course_id)
+
+                if course:
                     new_section = Section(
                         course=course,
                         class_section=section["class_section"],
@@ -89,7 +94,7 @@ class Command(BaseCommand):
                         is_active=section["is_active"],
                     )
                     new_sections.append(new_section)
-                except Course.DoesNotExist:
+                else:
                     skipped_sections += 1
                     if skipped_sections <= 5:
                         self.stdout.write(
