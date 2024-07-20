@@ -29,12 +29,11 @@ export const ScheduleProvider = ({ children }) => {
   }, []);
 
   const addCourse = (course) => {
+    console.log('Adding course to context:', course);
     setSelectedCourses((prevSelected) => {
-      // Check if the course is already selected
-      if (prevSelected.some((c) => c.id === course.id)) {
-        return prevSelected; // Don't add if already present
-      }
-      return [...prevSelected, course];
+      const newSelected = [...prevSelected, course];
+      console.log('Updated Selected Courses in Context:', newSelected);
+      return newSelected;
     });
   };
 

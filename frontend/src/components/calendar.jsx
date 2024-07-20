@@ -1,16 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import '../styles.css';
 
-//test
-
 function Calendar() {
   const { selectedCourses } = useSchedule();
+  const [, forceUpdate] = useState();
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
   const hours = [...Array(8).keys()].map((i) => i * 2 + 8);
 
+  useEffect(() => {
+    console.log('Selected Courses in useEffect:', selectedCourses);
+    forceUpdate({});
+  }, [selectedCourses]);
+
   const timeToHour = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':').map(Number);
+    const [time, period] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    if (period.toLowerCase() === 'pm' && hours !== 12) {
+      hours += 12;
+    }
     return hours + minutes / 60;
   };
 
@@ -22,34 +30,53 @@ function Calendar() {
 
   const getRandomColor = () => {
     const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 70%, 80%)`;
+    return `hsla(${hue}, 70%, 50%, 0.7)`;
   };
 
   const courseData = useMemo(() => {
-    return selectedCourses.map((course) => ({
-      ...course,
-      color: getRandomColor(),
-      startHour: timeToHour(course.start_time),
-      endHour: timeToHour(course.end_time),
-      days: course.days.split(''),
-    }));
+    console.log('Calculating courseData, selectedCourses:', selectedCourses);
+    return selectedCourses.map((course) => {
+      const processedCourse = {
+        ...course,
+        color: getRandomColor(),
+        startHour: timeToHour(course.start_time),
+        endHour: timeToHour(course.end_time),
+        days: course.days.match(/.{2}/g) || [],
+      };
+      console.log(
+        'Processed course:',
+        processedCourse,
+        'Start Hour:',
+        processedCourse.startHour,
+        'End Hour:',
+        processedCourse.endHour
+      );
+      return processedCourse;
+    });
   }, [selectedCourses]);
 
+  console.log('Rendered courseData:', courseData);
+
   const getCoursesForSlot = (day, hour) => {
-    return courseData.filter(
-      (course) =>
-        course.days.includes(day[0]) &&
-        hour >= course.startHour &&
-        hour < course.endHour
-    );
+    const dayMap = { Mon: 'Mo', Tue: 'Tu', Wed: 'We', Thu: 'Th', Fri: 'Fr' };
+    const courses = courseData.filter((course) => {
+      const isCorrectDay = course.days.includes(dayMap[day]);
+      const isWithinTimeSlot =
+        hour >= course.startHour && hour < course.endHour;
+      return isCorrectDay && isWithinTimeSlot;
+    });
+    console.log(`Courses for ${day} at ${hour}:`, courses);
+    return courses;
   };
 
+  const totalCourses = courseData.length;
   return (
     <div className='weekly-calendar' style={{ height: '50vh' }}>
       <div
         className='grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr] h-full'
         style={{ gap: 0 }}
       >
+        <div>Total Courses: {totalCourses}</div>
         <div
           className='col-start-2 col-span-5 grid grid-cols-5'
           style={{ gap: 0 }}
@@ -67,22 +94,31 @@ function Calendar() {
             </div>
             {days.map((day) => (
               <div key={`${day}-${hour}`} className='border relative h-8'>
-                {getCoursesForSlot(day, hour).map((course, index, array) => (
-                  <div
-                    key={course.id}
-                    className='border border-solid absolute overflow-hidden'
-                    style={{
-                      backgroundColor: course.color,
-                      top: `${(course.startHour - hour) * 100}%`,
-                      height: `${(course.endHour - course.startHour) * 100}%`,
-                      width: `${70 / array.length}%`,
-                      left: `${(index * 70) / array.length + 15}%`,
-                      opacity: 0.7,
-                    }}
-                  >
-                    <span className='text-xs whitespace-nowrap'>{`${course.major}${course.course_number}`}</span>
-                  </div>
-                ))}
+                {getCoursesForSlot(day, hour).map((course, index, array) => {
+                  console.log(
+                    `Rendering course for ${day} at ${hour}:`,
+                    course
+                  );
+                  return (
+                    <div
+                      key={course.id}
+                      className='border border-solid absolute overflow-hidden'
+                      style={{
+                        backgroundColor: course.color,
+                        top: `${Math.max((course.startHour - hour) * 100, 0)}%`,
+                        height: `${Math.min(
+                          (course.endHour - Math.max(course.startHour, hour)) *
+                            100,
+                          100
+                        )}%`,
+                        width: `${100 / array.length}%`,
+                        left: `${(index * 100) / array.length}%`,
+                      }}
+                    >
+                      <span className='text-xs whitespace-nowrap'>{`${course.major}${course.course_number}`}</span>
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </React.Fragment>
