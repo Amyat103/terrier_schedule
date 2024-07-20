@@ -2,21 +2,20 @@ import React from 'react';
 
 function SectionItem({ section, isExpanded, onExpand }) {
   return (
-    <div className='section-item p-2 border rounded mb-1'>
-      <div
-        className='section-header cursor-pointer flex justify-between items-center'
-        onClick={() => onExpand(section.id)}
-      >
-        <h4 className='font-medium'>Section {section.section_number}</h4>
-        <span className='text-sm'>{section.instructor}</span>
-      </div>
-      {isExpanded && (
-        <div className='section-details mt-2'>
-          <p>Time: {section.time}</p>
-          <p>Location: {section.location}</p>
-          <p>Capacity: {section.capacity}</p>
-        </div>
-      )}
+    <div className='section-item p-2 border-t'>
+      <p>
+        Section: {section.class_section} - {section.class_type}
+        <br />
+        Time: {section.start_time} - {section.end_time} {section.days}
+        <br />
+        Location: {section.location}
+        <br />
+        Enrollment Available: {section.enrollment_available}
+        <br />
+        Class Capacity: {section.class_capacity}
+        <br />
+        Enrollment Total: {section.enrollment_total}
+      </p>
     </div>
   );
 }

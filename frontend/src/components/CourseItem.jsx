@@ -1,3 +1,4 @@
+// CourseItem.jsx
 import React from 'react';
 import SectionList from './SectionList';
 
@@ -30,4 +31,4 @@ function CourseItem({ course, isExpanded, onExpand }) {
   );
 }
 
-export default CourseItem;
+export const MemoizedCourseItem = React.memo(CourseItem);

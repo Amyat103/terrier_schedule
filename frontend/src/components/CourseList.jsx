@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
-import CourseItem from './CourseItem';
+import { MemoizedCourseItem } from './CourseItem';
 
 function CourseList() {
   const { courses, loading, error } = useSchedule();
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCourseId, setExpandedCourseId] = useState(null);
 
-  if (loading) return <div>Loading courses...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  const filteredCourses = courses.filter(
-    (course) =>
-      course.major.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.course_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.short_title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCourses = useMemo(() => {
+    return courses.filter((course) =>
+      `${course.major} ${course.course_number} ${course.short_title}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+  }, [courses, searchTerm]);
 
   const handleExpand = (courseId) => {
     setExpandedCourseId(expandedCourseId === courseId ? null : courseId);
   };
+
+  if (loading) return <div>Loading courses...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className='course-list'>
@@ -33,7 +34,7 @@ function CourseList() {
       />
       <div className='space-y-1'>
         {filteredCourses.map((course, index) => (
-          <CourseItem
+          <MemoizedCourseItem
             key={`${course.id}-${index}`}
             course={course}
             isExpanded={expandedCourseId === course.id}
