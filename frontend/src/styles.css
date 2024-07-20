@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-dotted-border {
+  border-top: 2px dotted #d1d5db;
+  border-bottom: 2px dotted #d1d5db;
+}
+
+.custom-dotted-line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  border-top: 2px dotted #d1d5db;
+  transform: translateY(-50%);
+}
+
+.custom-vertical-dotted-line {
+  border-left: 2px dotted #d1d5db;
+  border-right: 2px dotted #d1d5db;
+}

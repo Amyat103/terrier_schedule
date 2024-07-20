@@ -10,9 +10,9 @@ function App() {
 
   return (
     <div className='App flex flex-col h-screen'>
-      <header className='bg-red-900 text-white p-4 w-full'>
-        <div className='container mx-auto flex items-center justify-center group hover:bg-red-800 transition-colors duration-300 cursor-pointer'>
-          <h1 className='text-3xl font-bold text-center mr-4 group-hover:text-blue-200'>
+      <header className='bg-red-900 text-white p-1 w-full'>
+        <div className='container mx-auto flex items-center justify-center group'>
+          <h1 className='text-3xl font-bold text-center mr-4'>
             Terrier Schedule
           </h1>
           <img
