@@ -10,17 +10,12 @@ export const fetchCourses = async () => {
     console.log('Fetching courses from:', `${API_URL}/courses/`);
     const response = await axios.get(`${API_URL}/courses/`);
     console.log('Courses API Response:', response);
-    if (
-      typeof response.data === 'string' &&
-      response.data.includes('<!doctype html>')
-    ) {
-      throw new Error(
-        'Received HTML instead of JSON. API endpoint might be incorrect.'
-      );
-    }
     return response.data;
   } catch (error) {
     console.error('Error fetching courses:', error);
+    if (error.response) {
+      console.error('Error response:', error.response.data);
+    }
     throw error;
   }
 };

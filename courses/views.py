@@ -15,22 +15,22 @@ logger = logging.getLogger(__name__)
 
 
 # Create your views here.
-class CourseViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+class SectionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Section.objects.all()
+    serializer_class = SectionSerializer
 
     def list(self, request, *args, **kwargs):
-        logger.info("CourseViewSet.list called")
+        logger.info("SectionViewSet.list called")
         try:
-            courses = CourseStorage.get_courses()
-            logger.info(f"Retrieved {len(courses)} courses from StoredCourse")
-            for course in courses[:5]:
-                logger.info(f"Sample course: {course}")
-            serializer = self.get_serializer(courses, many=True)
-            logger.info(f"Returning {len(serializer.data)} courses from CourseViewSet")
+            sections = CourseStorage.get_sections()
+            logger.info(f"Retrieved {len(sections)} sections")
+            serializer = self.get_serializer(sections, many=True)
+            logger.info(
+                f"Returning {len(serializer.data)} sections from SectionViewSet"
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error(f"Error in CourseViewSet.list: {str(e)}")
+            logger.error(f"Error in SectionViewSet.list: {str(e)}")
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

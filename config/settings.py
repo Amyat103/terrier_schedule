@@ -20,7 +20,9 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialize environ
-env = environ.Env(DEBUG=(bool, False))
+# env = environ.Env(DEBUG=(bool, False))
+env = environ.Env(DEBUG=True)
+
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
