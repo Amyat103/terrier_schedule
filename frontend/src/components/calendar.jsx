@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import '../styles.css';
 
+//test
+
 function Calendar() {
   const { selectedCourses } = useSchedule();
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
