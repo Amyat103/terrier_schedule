@@ -64,30 +64,49 @@ class Command(BaseCommand):
 
     def update_sections(self, sections, id_to_uuid):
         self.stdout.write("Updating sections...")
-        stored_sections = []
+        new_sections = []
         skipped_sections = 0
 
         for section in tqdm(sections, total=len(sections)):
-            section_id = section.pop("id")
             course_id = section.get("course_id")
 
             if course_id in id_to_uuid:
-                section["course_id"] = str(
-                    id_to_uuid[course_id]
-                )  # Convert to UUID string
-                stored_sections.append(
-                    StoredSection(section_id=section_id, data=section)
-                )
+                uuid_course_id = id_to_uuid[course_id]
+                try:
+                    course = Course.objects.get(course_id=uuid_course_id)
+                    new_section = Section(
+                        course=course,
+                        class_section=section["class_section"],
+                        class_type=section["class_type"],
+                        professor_name=section["professor_name"],
+                        class_capacity=section["class_capacity"],
+                        enrollment_total=section["enrollment_total"],
+                        enrollment_available=section["enrollment_available"],
+                        days=section["days"],
+                        start_time=section["start_time"],
+                        end_time=section["end_time"],
+                        location=section["location"],
+                        is_active=section["is_active"],
+                    )
+                    new_sections.append(new_section)
+                except Course.DoesNotExist:
+                    skipped_sections += 1
+                    if skipped_sections <= 5:
+                        self.stdout.write(
+                            f"Skipped section: {section} - Course not found"
+                        )
             else:
                 skipped_sections += 1
                 if skipped_sections <= 5:
-                    self.stdout.write(f"Skipped section: {section}")
+                    self.stdout.write(
+                        f"Skipped section: {section} - Course ID not in mapping"
+                    )
 
         with transaction.atomic():
-            StoredSection.objects.all().delete()
-            StoredSection.objects.bulk_create(stored_sections, batch_size=1000)
+            Section.objects.all().delete()
+            Section.objects.bulk_create(new_sections, batch_size=1000)
 
-        self.stdout.write(f"Successfully updated {len(stored_sections)} sections")
+        self.stdout.write(f"Successfully updated {len(new_sections)} sections")
         self.stdout.write(f"Skipped {skipped_sections} sections due to missing courses")
 
     def bulk_update_create(self, model, to_create, to_update):
