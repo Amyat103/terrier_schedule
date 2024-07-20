@@ -41,6 +41,9 @@ class SectionViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             sections = CourseStorage.get_sections()
             logger.info(f"Retrieved {len(sections)} sections")
+            if not sections:
+                logger.warning("No sections found")
+                return Response([], status=status.HTTP_200_OK)
             serializer = self.get_serializer(sections, many=True)
             logger.info(
                 f"Returning {len(serializer.data)} sections from SectionViewSet"

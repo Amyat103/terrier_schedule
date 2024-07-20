@@ -31,16 +31,17 @@ export const fetchSections = async () => {
     console.log('Fetching sections from:', `${API_URL}/sections/`);
     const response = await axios.get(`${API_URL}/sections/`);
     console.log('Sections API Response:', response);
-    if (
-      typeof response.data === 'string' &&
-      response.data.includes('<!doctype html>')
-    ) {
-      throw new Error(
-        'Received HTML instead of JSON. API endpoint might be incorrect.'
-      );
+
+    if (Array.isArray(response.data) && response.data.length === 0) {
+      console.warn('No sections data returned from API');
+      return {};
     }
 
-    // Organize sections by course_id
+    if (!Array.isArray(response.data)) {
+      console.error('Unexpected data format for sections:', response.data);
+      return {};
+    }
+
     const sectionsByCourse = response.data.reduce((acc, section) => {
       if (!acc[section.course_id]) {
         acc[section.course_id] = [];
@@ -52,6 +53,6 @@ export const fetchSections = async () => {
     return sectionsByCourse;
   } catch (error) {
     console.error('Error fetching sections:', error);
-    throw error;
+    return {};
   }
 };

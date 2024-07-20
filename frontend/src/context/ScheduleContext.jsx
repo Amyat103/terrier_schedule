@@ -18,23 +18,14 @@ export const ScheduleProvider = ({ children }) => {
         console.log('Loaded courses data (first 3):', coursesData.slice(0, 3));
         console.log('Loaded sections data:', sectionsData);
 
-        const sectionsByCourseId = sectionsData.reduce((acc, section) => {
-          if (!acc[section.course_id]) {
-            acc[section.course_id] = [];
-          }
-          acc[section.course_id].push(section);
-          return acc;
-        }, {});
-
         setCourses(coursesData);
-        setSections(sectionsByCourseId);
+        setSections(sectionsData);
         setLoading(false);
       } catch (err) {
         console.error('Failed to load data:', err);
         setError(err);
       }
     };
-
     loadData();
   }, []);
 
