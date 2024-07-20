@@ -27,15 +27,19 @@ export const ScheduleProvider = ({ children }) => {
     loadData();
   }, []);
 
-  const toggleCourseSelection = (section) => {
+  const addCourse = (course) => {
     setSelectedCourses((prevSelected) => {
-      const isAlreadySelected = prevSelected.some((s) => s.id === section.id);
-      if (isAlreadySelected) {
-        return prevSelected.filter((s) => s.id !== section.id);
-      } else {
-        return [...prevSelected, section];
+      if (prevSelected.some((c) => c.id === course.id)) {
+        return prevSelected;
       }
+      return [...prevSelected, course];
     });
+  };
+
+  const removeCourse = (courseId) => {
+    setSelectedCourses((prevSelected) =>
+      prevSelected.filter((course) => course.id !== courseId)
+    );
   };
 
   return (
@@ -44,7 +48,8 @@ export const ScheduleProvider = ({ children }) => {
         courses,
         sections,
         selectedCourses,
-        toggleCourseSelection,
+        addCourse,
+        removeCourse,
         loading,
         error,
       }}

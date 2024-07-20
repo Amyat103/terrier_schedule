@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import '../styles.css';
 
@@ -18,55 +18,68 @@ function Calendar() {
     return `${formattedHour} ${ampm}`;
   };
 
-  const shouldDisplayCourse = (day, hour, course) => {
-    const courseDays = course.days.split('');
-    const startHour = timeToHour(course.start_time);
-    const endHour = timeToHour(course.end_time);
-    return courseDays.includes(day[0]) && hour >= startHour && hour < endHour;
+  const getRandomColor = () => {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 70%, 80%)`;
+  };
+
+  const courseData = useMemo(() => {
+    return selectedCourses.map((course) => ({
+      ...course,
+      color: getRandomColor(),
+      startHour: timeToHour(course.start_time),
+      endHour: timeToHour(course.end_time),
+      days: course.days.split(''),
+    }));
+  }, [selectedCourses]);
+
+  const getCoursesForSlot = (day, hour) => {
+    return courseData.filter(
+      (course) =>
+        course.days.includes(day[0]) &&
+        hour >= course.startHour &&
+        hour < course.endHour
+    );
   };
 
   return (
-    <div className='weekly-calendar'>
-      <div className='grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr]'>
-        <div className='col-start-2 col-span-5 grid grid-cols-5'>
-          {days.map((day) => (
-            <div key={day} className='text-center font-bold'>
-              {day}
-            </div>
-          ))}
-        </div>
+    <div
+      className='weekly-calendar'
+      style={{ height: '50vh', overflow: 'auto' }}
+    >
+      <div
+        className='grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr] h-full'
+        style={{ gap: 0 }}
+      >
+        <div className='col-start-1 col-span-1'></div>{' '}
+        {days.map((day) => (
+          <div key={day} className='text-center font-bold border-b'>
+            {day}
+          </div>
+        ))}
         {hours.map((hour) => (
           <React.Fragment key={hour}>
-            <div className='flex items-center justify-end pr-2 h-16'>
+            <div className='flex items-center justify-end pr-2 h-8 border-r'>
               {formatHour(hour)}
             </div>
             {days.map((day) => (
-              <div
-                key={`${day}-${hour}`}
-                className='border h-16 relative custom-dotted-border custom-vertical-dotted-line'
-              >
-                <div className='custom-dotted-line'></div>
-                {selectedCourses.map(
-                  (course) =>
-                    shouldDisplayCourse(day, hour, course) && (
-                      <div
-                        key={course.id}
-                        className='bg-blue-200 border border-solid border-blue-400 absolute col-span-1'
-                        style={{
-                          top: `${
-                            (timeToHour(course.start_time) - hour) * 100
-                          }%`,
-                          height: `${
-                            (timeToHour(course.end_time) -
-                              timeToHour(course.start_time)) *
-                            100
-                          }%`,
-                        }}
-                      >
-                        {`${course.major}${course.course_number}`}
-                      </div>
-                    )
-                )}
+              <div key={`${day}-${hour}`} className='border relative h-8'>
+                {getCoursesForSlot(day, hour).map((course, index, array) => (
+                  <div
+                    key={course.id}
+                    className='border border-solid absolute overflow-hidden'
+                    style={{
+                      backgroundColor: course.color,
+                      top: `${(course.startHour - hour) * 100}%`,
+                      height: `${(course.endHour - course.startHour) * 100}%`,
+                      width: `${70 / array.length}%`,
+                      left: `${(index * 70) / array.length + 15}%`,
+                      opacity: 0.7,
+                    }}
+                  >
+                    <span className='text-xs whitespace-nowrap'>{`${course.major}${course.course_number}`}</span>
+                  </div>
+                ))}
               </div>
             ))}
           </React.Fragment>

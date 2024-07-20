@@ -2,8 +2,16 @@ import React from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 
 function SectionItem({ section }) {
-  const { toggleCourseSelection, selectedCourses } = useSchedule();
+  const { addCourse, removeCourse, selectedCourses } = useSchedule();
   const isSelected = selectedCourses.some((s) => s.id === section.id);
+
+  const handleToggle = () => {
+    if (isSelected) {
+      removeCourse(section.id);
+    } else {
+      addCourse(section);
+    }
+  };
 
   return (
     <div className='section-item p-2 border rounded'>
