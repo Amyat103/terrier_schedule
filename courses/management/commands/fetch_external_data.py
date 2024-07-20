@@ -22,8 +22,8 @@ class Command(BaseCommand):
         print("Fetching data...")
         courses, sections = self.fetch_external_data()
 
-        id_to_uuid = self.update_courses(courses)
-        self.update_sections(sections, id_to_uuid)
+        stored_courses, id_to_uuid = self.update_courses(courses)
+        self.update_sections(sections, stored_courses, id_to_uuid)
 
     def fetch_external_data(self):
         with connections["online"].cursor() as cursor:
@@ -53,31 +53,26 @@ class Command(BaseCommand):
             course_id = course.pop("id")
             uuid_id = uuid.uuid4()
             id_to_uuid[course_id] = uuid_id
-            stored_courses.append(StoredCourse(course_id=uuid_id, data=course))
+            stored_courses.append(Course(course_id=uuid_id, **course))
 
         with transaction.atomic():
-            StoredCourse.objects.all().delete()
-            StoredCourse.objects.bulk_create(stored_courses, batch_size=1000)
+            Course.objects.all().delete()
+            Course.objects.bulk_create(stored_courses, batch_size=1000)
 
         self.stdout.write(f"Successfully updated {len(stored_courses)} courses")
-        return id_to_uuid
+        return stored_courses, id_to_uuid
 
-    def update_sections(self, sections, id_to_uuid):
+    def update_sections(self, sections, stored_courses, id_to_uuid):
         self.stdout.write("Updating sections...")
-
-        all_courses = Course.objects.all()
-        course_dict = {course.course_id: course for course in all_courses}
-
         new_sections = []
         skipped_sections = 0
+        course_dict = {str(course.course_id): course for course in stored_courses}
 
         for section in tqdm(sections, total=len(sections)):
             course_id = section.get("course_id")
-
             if course_id in id_to_uuid:
-                uuid_course_id = id_to_uuid[course_id]
+                uuid_course_id = str(id_to_uuid[course_id])
                 course = course_dict.get(uuid_course_id)
-
                 if course:
                     new_section = Section(
                         course=course,
@@ -96,16 +91,8 @@ class Command(BaseCommand):
                     new_sections.append(new_section)
                 else:
                     skipped_sections += 1
-                    if skipped_sections <= 5:
-                        self.stdout.write(
-                            f"Skipped section: {section} - Course not found"
-                        )
             else:
                 skipped_sections += 1
-                if skipped_sections <= 5:
-                    self.stdout.write(
-                        f"Skipped section: {section} - Course ID not in mapping"
-                    )
 
         with transaction.atomic():
             Section.objects.all().delete()
