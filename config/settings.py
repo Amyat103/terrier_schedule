@@ -18,7 +18,11 @@ import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(DEBUG=(bool, False))
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, "default-secret-key"),
+    ALLOWED_HOSTS=(list, [".railway.app"]),
+)
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
@@ -26,16 +30,11 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".railway.app"])
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS") + [".railway.app"]
-
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
