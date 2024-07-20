@@ -36,6 +36,15 @@ class SectionSerializer(serializers.ModelSerializer):
             "is_active",
         ]
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not instance.course:
+            representation["course_id"] = None
+            representation["major"] = None
+            representation["course_number"] = None
+            representation["short_title"] = None
+        return representation
+
 
 class StoredCourseSerializer(serializers.ModelSerializer):
     class Meta:

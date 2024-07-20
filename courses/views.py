@@ -33,27 +33,16 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SectionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Section.objects.all()
     serializer_class = SectionSerializer
+
+    def get_queryset(self):
+        return CourseStorage.get_sections()
 
     def list(self, request, *args, **kwargs):
         logger.info("SectionViewSet.list called")
-        try:
-            sections = CourseStorage.get_sections()
-            logger.info(f"Retrieved {len(sections)} sections")
-            if not sections:
-                logger.warning("No sections found")
-                return Response([], status=status.HTTP_200_OK)
-            serializer = self.get_serializer(sections, many=True)
-            logger.info(
-                f"Returning {len(serializer.data)} sections from SectionViewSet"
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.error(f"Error in SectionViewSet.list: {str(e)}", exc_info=True)
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        queryset = self.get_queryset()
+        logger.info(f"Retrieved {len(queryset)} sections")
+        return Response(queryset, status=status.HTTP_200_OK)
 
 
 def course_schedule_view(request):
