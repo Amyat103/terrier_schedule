@@ -6,7 +6,7 @@ function Calendar() {
   const { selectedCourses } = useSchedule();
   const [, forceUpdate] = useState();
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const hours = [...Array(8).keys()].map((i) => i * 2 + 8);
+  const hours = [...Array(13).keys()].map((i) => i + 8);
 
   useEffect(() => {
     console.log('Selected Courses in useEffect:', selectedCourses);
@@ -35,43 +35,30 @@ function Calendar() {
 
   const courseData = useMemo(() => {
     console.log('Calculating courseData, selectedCourses:', selectedCourses);
-    return selectedCourses.map((course) => {
-      const processedCourse = {
-        ...course,
-        color: getRandomColor(),
-        startHour: timeToHour(course.start_time),
-        endHour: timeToHour(course.end_time),
-        days: course.days.match(/.{2}/g) || [],
-      };
-      console.log(
-        'Processed course:',
-        processedCourse,
-        'Start Hour:',
-        processedCourse.startHour,
-        'End Hour:',
-        processedCourse.endHour
-      );
-      return processedCourse;
-    });
+    return selectedCourses.map((course) => ({
+      ...course,
+      color: getRandomColor(),
+      startHour: timeToHour(course.start_time),
+      endHour: timeToHour(course.end_time),
+      days: course.days.match(/.{2}/g) || [],
+    }));
   }, [selectedCourses]);
 
   console.log('Rendered courseData:', courseData);
 
   const getCoursesForSlot = (day, hour) => {
     const dayMap = { Mon: 'Mo', Tue: 'Tu', Wed: 'We', Thu: 'Th', Fri: 'Fr' };
-    const courses = courseData.filter((course) => {
+    return courseData.filter((course) => {
       const isCorrectDay = course.days.includes(dayMap[day]);
       const isWithinTimeSlot =
         hour >= course.startHour && hour < course.endHour;
       return isCorrectDay && isWithinTimeSlot;
     });
-    console.log(`Courses for ${day} at ${hour}:`, courses);
-    return courses;
   };
 
   const totalCourses = courseData.length;
   return (
-    <div className='weekly-calendar' style={{ height: '50vh' }}>
+    <div className='weekly-calendar' style={{ height: '70vh' }}>
       <div
         className='grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr] h-full'
         style={{ gap: 0 }}

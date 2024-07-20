@@ -40,7 +40,6 @@ function CourseList() {
 
   return (
     <div className='course-list h-full flex flex-col'>
-      <h2 className='text-xl font-semibold mb-4'>Course List</h2>
       <div className='mb-4 flex space-x-4'>
         <select
           value={selectedMajor}

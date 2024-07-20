@@ -28,7 +28,7 @@ function App() {
         </div>
         <div className='w-1/2 p-4 overflow-auto'>
           <div className='mb-8'>
-            <h2 className='text-xl font-semibold mb-4'>Calendar</h2>
+            {/* <h2 className='text-xl font-semibold mb-4'>Calendar</h2> */}
             <div className='bg-gray-200 p-4 text-center'>
               <Calendar />
             </div>
