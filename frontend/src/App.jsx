@@ -26,17 +26,19 @@ function App() {
         <div className='w-1/2 p-4 overflow-hidden'>
           <CourseList />
         </div>
-        <div className='w-1/2 p-4 overflow-auto'>
-          <div className='mb-8'>
+        <div className='w-1/2 p-4'>
+          <div className='mb-8 h-full flex flex-col'>
             <h2 className='text-xl font-semibold mb-4'>Calendar</h2>
-            <div className='bg-gray-200 p-4 text-center'>
+            <div className='flex-grow h-1/2'>
               <Calendar />
             </div>
+            <div className='flex-grow'>
+              <SelectedCourses
+                courses={selectedCourses}
+                onRemove={toggleCourseSelection}
+              />
+            </div>
           </div>
-          <SelectedCourses
-            courses={selectedCourses}
-            onRemove={toggleCourseSelection}
-          />
         </div>
       </main>
     </div>
