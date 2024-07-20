@@ -81,15 +81,23 @@ class CourseStorage:
             for stored_section in stored_sections:
                 section_data = stored_section.data
                 try:
-                    course = Course.objects.get(course_id=section_data["course"])
+                    course = Course.objects.get(
+                        course_id=section_data.get("course_id")
+                        or section_data.get("course")
+                    )
                     section_data["major"] = course.major
                     section_data["course_number"] = course.course_number
                     section_data["short_title"] = course.short_title
                     sections.append(section_data)
                 except Course.DoesNotExist:
                     logger.warning(
-                        f"Course with id {section_data['course']} not found for section {stored_section.section_id}"
+                        f"Course not found for section {stored_section.section_id}"
                     )
+                except KeyError as e:
+                    logger.warning(
+                        f"Missing key in section data for section {stored_section.section_id}: {str(e)}"
+                    )
+            logger.info(f"Retrieved {len(sections)} valid sections")
             return sections
         except Exception as e:
             logger.error(f"Error fetching sections: {str(e)}", exc_info=True)
