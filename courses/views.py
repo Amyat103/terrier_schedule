@@ -37,6 +37,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SectionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Section.objects.all()
     serializer_class = SectionSerializer
 
     def list(self, request, *args, **kwargs):
