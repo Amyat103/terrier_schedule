@@ -6,6 +6,7 @@ const ScheduleContext = createContext();
 export const ScheduleProvider = ({ children }) => {
   const [courses, setCourses] = useState([]);
   const [sections, setSections] = useState({});
+  const [selectedCourses, setSelectedCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,9 +15,6 @@ export const ScheduleProvider = ({ children }) => {
       try {
         const coursesData = await fetchCourses();
         const sectionsData = await fetchSections();
-
-        console.log('Loaded courses data (first 3):', coursesData.slice(0, 3));
-        console.log('Loaded sections data:', sectionsData);
 
         setCourses(coursesData);
         setSections(sectionsData);
@@ -29,8 +27,28 @@ export const ScheduleProvider = ({ children }) => {
     loadData();
   }, []);
 
+  const toggleCourseSelection = (section) => {
+    setSelectedCourses((prevSelected) => {
+      const isAlreadySelected = prevSelected.some((s) => s.id === section.id);
+      if (isAlreadySelected) {
+        return prevSelected.filter((s) => s.id !== section.id);
+      } else {
+        return [...prevSelected, section];
+      }
+    });
+  };
+
   return (
-    <ScheduleContext.Provider value={{ courses, sections, loading, error }}>
+    <ScheduleContext.Provider
+      value={{
+        courses,
+        sections,
+        selectedCourses,
+        toggleCourseSelection,
+        loading,
+        error,
+      }}
+    >
       {children}
     </ScheduleContext.Provider>
   );

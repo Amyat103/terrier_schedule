@@ -20,7 +20,11 @@ function SectionList({ courseId }) {
     <div className='section-list mt-2'>
       <h4 className='font-medium mb-2'>Sections ({courseSections.length}):</h4>
       {courseSections.map((section) => (
-        <SectionItem key={section.id} section={section} />
+        <SectionItem
+          key={section.id}
+          section={section}
+          group-hover:text-blue-200
+        />
       ))}
     </div>
   );
