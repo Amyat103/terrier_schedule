@@ -72,9 +72,13 @@ class CourseStorage:
 
     @staticmethod
     def get_sections():
-        sections = [section.data for section in StoredSection.objects.all()]
-        print(f"Retrieved {len(sections)} sections from StoredSection")
-        return sections
+        try:
+            sections = StoredSection.objects.all()
+            logger.info(f"Retrieved {sections.count()} sections from StoredSection")
+            return [section.data for section in sections]
+        except Exception as e:
+            logger.error(f"Error fetching sections: {str(e)}", exc_info=True)
+            return []
 
     @staticmethod
     def print_stored_data():
