@@ -3,6 +3,7 @@ import CourseList from './components/CourseList';
 import SelectedCourses from './components/SelectedCourses';
 import { useSchedule } from './context/ScheduleContext';
 import rhett from '../assets/rhett.png';
+import Calendar from './components/Calendar';
 
 function App() {
   const { selectedCourses, toggleCourseSelection } = useSchedule();
@@ -22,14 +23,14 @@ function App() {
         </div>
       </header>
       <main className='flex-grow flex overflow-hidden'>
-        <div className='w-2/3 p-4 overflow-hidden'>
+        <div className='w-1/2 p-4 overflow-hidden'>
           <CourseList />
         </div>
-        <div className='w-1/3 p-4 overflow-auto'>
+        <div className='w-1/2 p-4 overflow-auto'>
           <div className='mb-8'>
             <h2 className='text-xl font-semibold mb-4'>Calendar</h2>
             <div className='bg-gray-200 p-4 text-center'>
-              Placeholder for calendar
+              <Calendar />
             </div>
           </div>
           <SelectedCourses

@@ -33,7 +33,7 @@ function SectionItem({ section }) {
       </div>
       <button
         onClick={() => toggleCourseSelection(section)}
-        className='mt-2 px-2 py-1 bg-blue-500 text-white rounded'
+        className='mt-2 w-full px-2 py-1 bg-red-700 text-white rounded hover:bg-red-800 transition-colors'
       >
         {isSelected ? 'Remove' : 'Add'}
       </button>
