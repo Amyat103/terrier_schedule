@@ -22,8 +22,8 @@ class Command(BaseCommand):
         print("Fetching data...")
         courses, sections = self.fetch_external_data()
 
-        self.update_courses(courses)
-        self.update_sections(sections)
+        id_to_uuid = self.update_courses(courses)
+        self.update_sections(sections, id_to_uuid)
 
     def fetch_external_data(self):
         with connections["online"].cursor() as cursor:
@@ -47,49 +47,40 @@ class Command(BaseCommand):
 
     def update_courses(self, courses):
         self.stdout.write("Updating courses...")
-        new_courses = []
-        for course_data in tqdm(courses, total=len(courses)):
-            course = Course(
-                course_id=uuid.uuid4(),
-                id=course_data["id"],
-                term=course_data.get("term"),
-                major=course_data["major"],
-                course_number=course_data["course_number"],
-                short_title=course_data["short_title"],
-                full_title=course_data["full_title"],
-                description=course_data["description"],
-                has_details=course_data["has_details"],
-                is_registerable=course_data["is_registerable"],
-            )
-            new_courses.append(course)
+        stored_courses = []
+        id_to_uuid = {}  # New dictionary to map integer IDs to UUIDs
+        for course in tqdm(courses, total=len(courses)):
+            course_id = course.pop("id")
+            uuid_id = uuid.uuid4()  # Generate a new UUID
+            id_to_uuid[course_id] = uuid_id  # Store the mapping
+            stored_courses.append(StoredCourse(course_id=uuid_id, data=course))
 
         with transaction.atomic():
-            Course.objects.all().delete()
-            Course.objects.bulk_create(new_courses, batch_size=1000)
+            StoredCourse.objects.all().delete()
+            StoredCourse.objects.bulk_create(stored_courses, batch_size=1000)
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfully updated {len(new_courses)} courses")
-        )
+        self.stdout.write(f"Successfully updated {len(stored_courses)} courses")
+        return id_to_uuid
 
-    def update_sections(self, sections):
+    def update_sections(self, sections, id_to_uuid):
         self.stdout.write("Updating sections...")
         stored_sections = []
         skipped_sections = 0
-        existing_course_ids = set(Course.objects.values_list("course_id", flat=True))
 
         for section in tqdm(sections, total=len(sections)):
             section_id = section.pop("id")
             course_id = section.get("course_id")
 
-            if course_id in existing_course_ids:
+            if course_id in id_to_uuid:
+                section["course_id"] = str(
+                    id_to_uuid[course_id]
+                )  # Convert to UUID string
                 stored_sections.append(
                     StoredSection(section_id=section_id, data=section)
                 )
             else:
                 skipped_sections += 1
-                if (
-                    skipped_sections <= 5
-                ):  # Print details for the first 5 skipped sections
+                if skipped_sections <= 5:
                     self.stdout.write(f"Skipped section: {section}")
 
         with transaction.atomic():
