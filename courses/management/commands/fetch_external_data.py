@@ -48,6 +48,7 @@ class Command(BaseCommand):
     def update_courses(self, courses):
         self.stdout.write("Updating courses...")
         stored_courses = []
+        course_objects = []
         id_to_uuid = {}
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop("id")
@@ -55,22 +56,22 @@ class Command(BaseCommand):
             id_to_uuid[course_id] = uuid_id
             stored_course = StoredCourse(course_id=uuid_id, data=course)
             stored_courses.append(stored_course)
+            course_objects.append(Course(course_id=uuid_id, **course))
 
         with transaction.atomic():
             StoredCourse.objects.all().delete()
+            Course.objects.all().delete()
             StoredCourse.objects.bulk_create(stored_courses, batch_size=1000)
+            Course.objects.bulk_create(course_objects, batch_size=1000)
 
         self.stdout.write(f"Successfully updated {len(stored_courses)} courses")
-        return stored_courses, id_to_uuid
+        return course_objects, id_to_uuid
 
-    def update_sections(self, sections, stored_courses, id_to_uuid):
+    def update_sections(self, sections, course_objects, id_to_uuid):
         self.stdout.write("Updating sections...")
         new_sections = []
         skipped_sections = 0
-        course_dict = {
-            str(course.course_id): Course.objects.get(course_id=course.course_id)
-            for course in stored_courses
-        }
+        course_dict = {str(course.course_id): course for course in course_objects}
 
         for section in tqdm(sections, total=len(sections)):
             course_id = section.get("course_id")
@@ -104,3 +105,10 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Successfully updated {len(new_sections)} sections")
         self.stdout.write(f"Skipped {skipped_sections} sections due to missing courses")
+
+    def bulk_update_create(self, model, to_create, to_update):
+        with transaction.atomic():
+            if to_create:
+                model.objects.bulk_create(to_create)
+            if to_update:
+                model.objects.bulk_update(to_update, ["data"])
