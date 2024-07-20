@@ -43,20 +43,21 @@ function Calendar() {
   };
 
   return (
-    <div
-      className='weekly-calendar'
-      style={{ height: '50vh', overflow: 'auto' }}
-    >
+    <div className='weekly-calendar' style={{ height: '50vh' }}>
       <div
         className='grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr] h-full'
         style={{ gap: 0 }}
       >
-        <div className='col-start-1 col-span-1'></div>{' '}
-        {days.map((day) => (
-          <div key={day} className='text-center font-bold border-b'>
-            {day}
-          </div>
-        ))}
+        <div
+          className='col-start-2 col-span-5 grid grid-cols-5'
+          style={{ gap: 0 }}
+        >
+          {days.map((day) => (
+            <div key={day} className='text-center font-bold border-b'>
+              {day}
+            </div>
+          ))}
+        </div>
         {hours.map((hour) => (
           <React.Fragment key={hour}>
             <div className='flex items-center justify-end pr-2 h-8 border-r'>

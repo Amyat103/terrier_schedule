@@ -40,7 +40,7 @@ function SectionItem({ section }) {
         </p>
       </div>
       <button
-        onClick={() => toggleCourseSelection(section)}
+        onClick={handleToggle}
         className='mt-2 w-full px-2 py-1 bg-red-700 text-white rounded hover:bg-red-800 transition-colors'
       >
         {isSelected ? 'Remove' : 'Add'}

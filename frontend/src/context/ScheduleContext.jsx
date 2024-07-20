@@ -1,3 +1,4 @@
+// ScheduleContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { fetchCourses, fetchSections } from '../api/course_fetch';
 
@@ -29,8 +30,9 @@ export const ScheduleProvider = ({ children }) => {
 
   const addCourse = (course) => {
     setSelectedCourses((prevSelected) => {
+      // Check if the course is already selected
       if (prevSelected.some((c) => c.id === course.id)) {
-        return prevSelected;
+        return prevSelected; // Don't add if already present
       }
       return [...prevSelected, course];
     });
