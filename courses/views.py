@@ -1,17 +1,18 @@
+import logging
+
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from .course_storage import CourseStorage
 from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
-from django.http import JsonResponse
-import logging
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
+
 
 # Create your views here.
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,14 +31,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Error in CourseViewSet.list: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def get_queryset(self):
-        queryset = Course.objects.all()
-        major = self.request.query_params.get("major", None)
-        if major is not None:
-            queryset = queryset.filter(major=major)
-        return queryset
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class SectionViewSet(viewsets.ReadOnlyModelViewSet):

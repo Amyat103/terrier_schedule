@@ -53,11 +53,12 @@ class Command(BaseCommand):
             course_id = course.pop("id")
             uuid_id = uuid.uuid4()
             id_to_uuid[course_id] = uuid_id
-            stored_courses.append(Course(course_id=uuid_id, **course))
+            stored_course = StoredCourse(course_id=uuid_id, data=course)
+            stored_courses.append(stored_course)
 
         with transaction.atomic():
-            Course.objects.all().delete()
-            Course.objects.bulk_create(stored_courses, batch_size=1000)
+            StoredCourse.objects.all().delete()
+            StoredCourse.objects.bulk_create(stored_courses, batch_size=1000)
 
         self.stdout.write(f"Successfully updated {len(stored_courses)} courses")
         return stored_courses, id_to_uuid

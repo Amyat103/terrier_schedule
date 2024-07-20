@@ -1,17 +1,22 @@
-// CourseItem.jsx
 import React from 'react';
-import SectionList from './SectionList';
+import { MemoizedSectionList } from './SectionList';
 
 function CourseItem({ course, isExpanded, onExpand }) {
   const registrableStyle = course.is_registerable
     ? 'bg-green-500 text-white'
     : 'bg-red-500 text-white';
 
+  const handleClick = React.useCallback(() => {
+    console.log('Course in CourseItem:', course);
+    console.log('Course ID in CourseItem:', course.course_id);
+    onExpand(course.course_id);
+  }, [course.course_id, onExpand]);
+
   return (
     <div className='course-item p-4 border rounded mb-2'>
       <div
         className='course-header cursor-pointer flex justify-between items-center'
-        onClick={onExpand}
+        onClick={handleClick}
       >
         <h3 className='font-medium'>
           {course.major} {course.course_number}: {course.short_title}
@@ -24,7 +29,7 @@ function CourseItem({ course, isExpanded, onExpand }) {
         <div className='course-details mt-2'>
           <p className='mb-2'>Title: {course.full_title}</p>
           <p className='mb-2'>Description: {course.description}</p>
-          <SectionList courseId={course.course_id} />
+          <MemoizedSectionList courseId={course.course_id} />
         </div>
       )}
     </div>

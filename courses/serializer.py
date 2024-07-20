@@ -10,8 +10,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class SectionSerializer(serializers.ModelSerializer):
+    course_id = serializers.UUIDField(source="course.course_id", read_only=True)
+
     class Meta:
-        model = Section
+        model = Course
         fields = "__all__"
 
 

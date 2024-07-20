@@ -16,6 +16,7 @@ function CourseList() {
   }, [courses, searchTerm]);
 
   const handleExpand = (courseId) => {
+    console.log('Expanding course with ID:', courseId);
     setExpandedCourseId(expandedCourseId === courseId ? null : courseId);
   };
 
@@ -33,12 +34,12 @@ function CourseList() {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <div className='space-y-1'>
-        {filteredCourses.map((course, index) => (
+        {filteredCourses.map((course) => (
           <MemoizedCourseItem
-            key={`${course.id}-${index}`}
+            key={course.course_id}
             course={course}
-            isExpanded={expandedCourseId === course.id}
-            onExpand={() => handleExpand(course.id)}
+            isExpanded={expandedCourseId === course.course_id}
+            onExpand={handleExpand}
           />
         ))}
       </div>

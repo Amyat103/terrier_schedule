@@ -1,4 +1,5 @@
 import json
+import logging
 
 from django.db import connection
 from django.utils import timezone
@@ -6,7 +7,6 @@ from rest_framework import serializers
 
 from .models import Course, Section, StoredCourse, StoredSection
 from .serializer import CourseSerializer, SectionSerializer
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,10 @@ class CourseStorage:
         try:
             courses = StoredCourse.objects.all()
             logger.info(f"Retrieved {courses.count()} courses from StoredCourse")
-            return [course.data for course in courses]
+            return [
+                {"id": course.id, "course_id": course.course_id, **course.data}
+                for course in courses
+            ]
         except Exception as e:
             logger.error(f"Error fetching courses: {str(e)}", exc_info=True)
             return []

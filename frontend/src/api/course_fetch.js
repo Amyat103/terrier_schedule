@@ -36,7 +36,17 @@ export const fetchSections = async () => {
         'Received HTML instead of JSON. API endpoint might be incorrect.'
       );
     }
-    return response.data;
+
+    // Organize sections by course_id
+    const sectionsByCourse = response.data.reduce((acc, section) => {
+      if (!acc[section.course_id]) {
+        acc[section.course_id] = [];
+      }
+      acc[section.course_id].push(section);
+      return acc;
+    }, {});
+
+    return sectionsByCourse;
   } catch (error) {
     console.error('Error fetching sections:', error);
     throw error;
