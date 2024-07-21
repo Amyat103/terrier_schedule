@@ -37,7 +37,7 @@ function CourseCard({ course, index, groupSize }) {
         backgroundColor: `hsl(${Math.random() * 360}, 70%, 80%)`,
       }}
     >
-      <div className='font-bold'>{`${course.major}${course.course_number}`}</div>
+      <div className='font-bold'>{course.short_title}</div>
       <div>{`${course.start_time} - ${course.end_time}`}</div>
     </div>
   );

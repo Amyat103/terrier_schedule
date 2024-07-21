@@ -41,10 +41,8 @@ function Calendar() {
     return grouped;
   }, [coursesByDay]);
 
-  console.log('Grouped courses by day:', groupedCoursesByDay);
-
   return (
-    <div className='flex h-[65vh]'>
+    <div className='calendar-container'>
       <HoursColumn />
       <div className='flex-grow grid grid-cols-5 relative'>
         <GridBackground />

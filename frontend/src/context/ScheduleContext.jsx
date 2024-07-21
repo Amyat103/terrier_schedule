@@ -1,4 +1,3 @@
-// ScheduleContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { fetchCourses, fetchSections } from '../api/course_fetch';
 
@@ -8,6 +7,7 @@ export const ScheduleProvider = ({ children }) => {
   const [courses, setCourses] = useState([]);
   const [sections, setSections] = useState({});
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [courseColors, setCourseColors] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -29,7 +29,6 @@ export const ScheduleProvider = ({ children }) => {
   }, []);
 
   const addCourse = (course) => {
-    console.log('Adding course to context:', course);
     setSelectedCourses((prevSelected) => {
       const newCourse = {
         ...course,
@@ -37,9 +36,17 @@ export const ScheduleProvider = ({ children }) => {
         start_time: course.start_time || '',
         end_time: course.end_time || '',
       };
-      const newSelected = [...prevSelected, newCourse];
-      console.log('Updated Selected Courses in Context:', newSelected);
-      return newSelected;
+      return [...prevSelected, newCourse];
+    });
+
+    setCourseColors((prevColors) => {
+      if (!prevColors[course.course_id]) {
+        return {
+          ...prevColors,
+          [course.course_id]: `hsl(${Math.random() * 360}, 70%, 80%)`,
+        };
+      }
+      return prevColors;
     });
   };
 
@@ -47,6 +54,12 @@ export const ScheduleProvider = ({ children }) => {
     setSelectedCourses((prevSelected) =>
       prevSelected.filter((course) => course.id !== courseId)
     );
+    // Optionally, you can also remove the color when a course is removed
+    // setCourseColors((prevColors) => {
+    //   const newColors = {...prevColors};
+    //   delete newColors[courseId];
+    //   return newColors;
+    // });
   };
 
   return (
@@ -55,6 +68,7 @@ export const ScheduleProvider = ({ children }) => {
         courses,
         sections,
         selectedCourses,
+        courseColors,
         addCourse,
         removeCourse,
         loading,
