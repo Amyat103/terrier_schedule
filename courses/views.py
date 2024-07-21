@@ -59,3 +59,31 @@ def course_schedule_view(request):
 
 def debug_view(request):
     return JsonResponse({"message": "Debug view working"})
+
+
+from .cache_utils import (
+    get_all_courses,
+    get_all_sections,
+    get_courses_by_major_prefix,
+    get_sections_by_course_id,
+)
+
+
+@api_view(["GET"])
+def course_list(request):
+    major_prefix = request.query_params.get("major_prefix")
+    if major_prefix:
+        courses = get_courses_by_major_prefix(major_prefix)
+    else:
+        courses = get_all_courses()
+    return Response(courses)
+
+
+@api_view(["GET"])
+def section_list(request):
+    course_id = request.query_params.get("course_id")
+    if course_id:
+        sections = get_sections_by_course_id(course_id)
+    else:
+        sections = get_all_sections()
+    return Response(sections)
