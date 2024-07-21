@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from django.core.cache import cache
@@ -9,16 +10,31 @@ CACHE_DURATION = timedelta(days=8)
 COURSES_CACHE_KEY = "all_courses_data"
 SECTIONS_CACHE_KEY = "all_sections_data"
 
+logger = logging.getLogger(__name__)
+
 
 def update_cache_after_fetch():
-    all_courses = Course.objects.all()
-    all_sections = Section.objects.all()
+    logger.info("Starting cache update")
 
+    logger.info("Fetching courses from database")
+    all_courses = Course.objects.all()
+    logger.info(f"Fetched {all_courses.count()} courses")
+
+    logger.info("Fetching sections from database")
+    all_sections = Section.objects.all()
+    logger.info(f"Fetched {all_sections.count()} sections")
+
+    logger.info("Serializing courses")
     courses_data = CourseSerializer(all_courses, many=True).data
+    logger.info("Serializing sections")
     sections_data = SectionSerializer(all_sections, many=True).data
 
+    logger.info("Storing courses in cache")
     cache.set(COURSES_CACHE_KEY, courses_data, timeout=CACHE_DURATION.total_seconds())
+    logger.info("Storing sections in cache")
     cache.set(SECTIONS_CACHE_KEY, sections_data, timeout=CACHE_DURATION.total_seconds())
+
+    logger.info("Cache update complete")
 
 
 def get_all_courses():
