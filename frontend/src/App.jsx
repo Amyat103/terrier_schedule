@@ -2,7 +2,7 @@ import React from 'react';
 import CourseList from './components/CourseList';
 import { useSchedule } from './context/ScheduleContext';
 import rhett from '../assets/rhett.png';
-import Calendar from './components/Calendar';
+import NewCalendar from './components/NewCalendar';
 
 function App() {
   const { selectedCourses, removeCourse } = useSchedule();
@@ -24,7 +24,7 @@ function App() {
         <div className='w-1/2 p-4 overflow-auto'>
           <div className='mb-8'>
             <div className='bg-gray-200 p-1 text-center'>
-              <Calendar />
+              <NewCalendar />
             </div>
           </div>
           <div>
