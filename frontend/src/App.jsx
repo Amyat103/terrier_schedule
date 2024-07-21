@@ -29,11 +29,11 @@ function App() {
           </div>
           <div>
             <h2 className='text-xl font-semibold mb-4'>Selected Courses</h2>
-            <ul>
+            <ul className='divide-y divide-grey-200'>
               {selectedCourses.map((course) => (
                 <li
                   key={course.id}
-                  className='mb-2 flex justify-between items-center'
+                  className='py-2 flex justify-between items-center hover:bg-gray-100 transition-colors duration-200'
                 >
                   <span>{`${course.major}${course.course_number}: ${course.short_title}`}</span>
                   <button

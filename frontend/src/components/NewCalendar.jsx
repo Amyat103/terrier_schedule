@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -7,21 +7,26 @@ import { useSchedule } from '../context/ScheduleContext';
 
 const localizer = momentLocalizer(moment);
 
-const TimeGutterHeader = () => null;
-
-const WeekHeader = ({ date }) => {
-  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const dayIndex = date.getDay() - 1;
-  return dayIndex >= 0 && dayIndex < 5 ? (
-    <span>{weekdays[dayIndex]}</span>
-  ) : null;
-};
-
 const EventComponent = ({ event }) => (
-  <div style={{ fontSize: '0.8em', backgroundColor: 'lightblue' }}>
-    <div>{event.short_title}</div>
-    <br />
+  <div style={{ lineHeight: '1.2', padding: '2px', color: 'black' }}>
+    <div style={{ fontWeight: 'bold' }}>{event.title}</div>
     <div>
+      {event.start_time} - {event.end_time}
+    </div>
+  </div>
+);
+
+const CustomEvent = ({ event }) => (
+  <div
+    style={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    }}
+  >
+    <EventComponent event={event} />
+    <div style={{ fontSize: '0.7em', marginTop: 'auto' }}>
       {event.start_time} - {event.end_time}
     </div>
   </div>
@@ -50,9 +55,11 @@ function NewCalendar() {
       ).toDate();
       return {
         id: section.id,
-        title: `${section.major}${section.course_number}: ${section.short_title}`,
+        title: `${section.short_title}`,
         start,
         end,
+        start_time: section.start_time,
+        end_time: section.end_time,
       };
     });
   });
@@ -90,7 +97,14 @@ function NewCalendar() {
         eventPropGetter={(event) => ({
           style: {
             backgroundColor: sectionColors[event.id],
-            height: '100vh',
+            border: 'none',
+            boxShadow: 'none',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            padding: '2px',
+            height: '100%',
           },
         })}
       />

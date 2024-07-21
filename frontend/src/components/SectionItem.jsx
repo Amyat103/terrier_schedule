@@ -15,8 +15,10 @@ function SectionItem({ section }) {
   };
 
   return (
-    <div className='section-item p-2 border rounded'>
-      <div>
+    <div className='section-item p-2 border rounded flex flex-col h-full'>
+      {' '}
+      <div className='flex-grow'>
+        {' '}
         <p>
           <span className='font-semibold'>Section:</span>{' '}
           {section.class_section}

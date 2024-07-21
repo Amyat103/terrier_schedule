@@ -7,6 +7,10 @@
   height: 100% !important;
 }
 
+.rbc-event-label {
+  display: none !important;
+}
+
 .rbc-time-view {
   border: none;
   flex: 1;
@@ -52,8 +56,11 @@
 }
 
 .rbc-event {
-  border: none;
-  padding: 2px 5px;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  background-color: #f9f9f9;
+  overflow: visible;
+  white-space: nowrap;
 }
 
 .rbc-time-header-content {
@@ -73,7 +80,7 @@
 }
 
 .rbc-event-content {
-  font-size: 0.8em;
+  font-size: 0.68em;
 }
 
 .rbc-time-content {
