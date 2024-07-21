@@ -107,12 +107,18 @@ def get_all_courses():
 
 
 def get_all_sections():
-    sections = cache.get(SECTIONS_CACHE_KEY)
-    if not sections:
-        all_sections = Section.objects.all()
-        sections = SectionSerializer(all_sections, many=True).data
-        cache.set(SECTIONS_CACHE_KEY, sections, timeout=CACHE_DURATION.total_seconds())
-    return sections
+    total_batches = cache.get(f"{SECTIONS_CACHE_KEY}_total_batches")
+    if total_batches is None:
+        return None
+
+    all_sections = []
+    for i in range(total_batches):
+        batch = cache.get(f"{SECTIONS_CACHE_KEY}_{i}")
+        if batch is None:
+            return None
+        all_sections.extend(batch)
+
+    return all_sections
 
 
 def get_courses_by_major_prefix(major_prefix):
