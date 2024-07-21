@@ -28,7 +28,7 @@ function Calendar() {
   }, [coursesByDay]);
 
   console.log('Final grouped courses for rendering:', groupedCoursesByDay);
-
+  // here
   return (
     <div className='flex h-full'>
       <HoursColumn />
