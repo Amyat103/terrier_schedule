@@ -8,7 +8,7 @@ export const timeToMinutes = (timeString) => {
 };
 
 export const minutesToGridRow = (minutes) => {
-  return Math.floor((minutes - 480) / 30) + 1;
+  return Math.floor((minutes - 480) / 30) * 2 + 1;
 };
 
 export const dayOrder = ['Mo', 'Tu', 'We', 'Th', 'Fr'];

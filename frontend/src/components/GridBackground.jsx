@@ -15,7 +15,11 @@ function GridBackground() {
         >
           <div className='text-center font-bold py-2'>{day}</div>
           {hours.map((hour) => (
-            <div key={hour} className='border-t'></div>
+            <div key={hour} className='border-t relative'>
+              <span className='absolute -top-3 -left-16 text-xs text-gray-500'>
+                {hour % 12 || 12} {hour < 12 ? 'AM' : 'PM'}
+              </span>
+            </div>
           ))}
         </div>
       ))}

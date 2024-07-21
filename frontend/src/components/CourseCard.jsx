@@ -1,9 +1,13 @@
 import React from 'react';
-import { timeToMinutes, minutesToGridRow } from '../utils/calendarUtils';
+import { timeToMinutes } from '../utils/calendarUtils';
 
 function CourseCard({ course, index, groupSize }) {
-  const startRow = minutesToGridRow(timeToMinutes(course.start_time));
-  const endRow = minutesToGridRow(timeToMinutes(course.end_time));
+  const startMinutes = timeToMinutes(course.start_time);
+  const endMinutes = timeToMinutes(course.end_time);
+  const duration = endMinutes - startMinutes;
+
+  const top = ((startMinutes - 480) / (14 * 60)) * 100;
+  const height = (duration / (14 * 60)) * 100;
   const width = 100 / groupSize;
   const left = width * index;
 
@@ -12,14 +16,12 @@ function CourseCard({ course, index, groupSize }) {
     return `hsl(${hue}, 70%, 80%)`;
   };
 
-  console.log('Rendering CourseCard:', course, startRow, endRow, width, left);
-
   return (
     <div
-      className='absolute overflow-hidden rounded shadow-sm p-1 text-xs'
+      className='absolute rounded shadow-sm p-1 text-xs overflow-hidden'
       style={{
-        top: `${(startRow - 1) * (100 / 14)}%`,
-        height: `${(endRow - startRow) * (100 / 14)}%`,
+        top: `${top}%`,
+        height: `${height}%`,
         width: `${width}%`,
         left: `${left}%`,
         backgroundColor: getRandomColor(),
