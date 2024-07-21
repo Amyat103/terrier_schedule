@@ -6,35 +6,73 @@ from django.core.cache import cache
 from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
 
+logger = logging.getLogger(__name__)
+
 CACHE_DURATION = timedelta(days=8)
 COURSES_CACHE_KEY = "all_courses_data"
 SECTIONS_CACHE_KEY = "all_sections_data"
-
-logger = logging.getLogger(__name__)
+BATCH_SIZE = 1000
 
 
 def update_cache_after_fetch():
     logger.info("Starting cache update")
 
-    logger.info("Fetching courses from database")
-    all_courses = Course.objects.all()
-    logger.info(f"Fetched {all_courses.count()} courses")
-
-    logger.info("Fetching sections from database")
-    all_sections = Section.objects.all()
-    logger.info(f"Fetched {all_sections.count()} sections")
-
-    logger.info("Serializing courses")
-    courses_data = CourseSerializer(all_courses, many=True).data
-    logger.info("Serializing sections")
-    sections_data = SectionSerializer(all_sections, many=True).data
-
-    logger.info("Storing courses in cache")
-    cache.set(COURSES_CACHE_KEY, courses_data, timeout=CACHE_DURATION.total_seconds())
-    logger.info("Storing sections in cache")
-    cache.set(SECTIONS_CACHE_KEY, sections_data, timeout=CACHE_DURATION.total_seconds())
+    update_courses_cache()
+    update_sections_cache()
 
     logger.info("Cache update complete")
+
+
+def update_courses_cache():
+    logger.info("Updating courses cache")
+    total_batches = (Course.objects.count() - 1) // BATCH_SIZE + 1
+
+    for i in range(total_batches):
+        logger.info(f"Processing courses batch {i + 1}/{total_batches}")
+        courses_batch = Course.objects.all()[i * BATCH_SIZE : (i + 1) * BATCH_SIZE]
+        serialized_batch = CourseSerializer(courses_batch, many=True).data
+        cache.set(
+            f"{COURSES_CACHE_KEY}_{i}",
+            serialized_batch,
+            timeout=CACHE_DURATION.total_seconds(),
+        )
+
+    cache.set(
+        f"{COURSES_CACHE_KEY}_total_batches",
+        total_batches,
+        timeout=CACHE_DURATION.total_seconds(),
+    )
+
+
+def get_all_courses():
+    total_batches = cache.get(f"{COURSES_CACHE_KEY}_total_batches")
+    if total_batches is None:
+        return None
+
+    all_courses = []
+    for i in range(total_batches):
+        batch = cache.get(f"{COURSES_CACHE_KEY}_{i}")
+        if batch is None:
+            return None
+        all_courses.extend(batch)
+
+    return all_courses
+
+
+def update_sections_cache():
+    logger.info("Updating sections cache")
+    all_sections_data = []
+
+    for i in range(0, Section.objects.count(), BATCH_SIZE):
+        logger.info(f"Processing sections batch {i//BATCH_SIZE + 1}")
+        sections_batch = Section.objects.all()[i : i + BATCH_SIZE]
+        serialized_batch = SectionSerializer(sections_batch, many=True).data
+        all_sections_data.extend(serialized_batch)
+
+    logger.info(f"Storing {len(all_sections_data)} sections in cache")
+    cache.set(
+        SECTIONS_CACHE_KEY, all_sections_data, timeout=CACHE_DURATION.total_seconds()
+    )
 
 
 def get_all_courses():
