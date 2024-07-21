@@ -176,6 +176,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
+redis_url = os.getenv("REDIS_URL")
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
