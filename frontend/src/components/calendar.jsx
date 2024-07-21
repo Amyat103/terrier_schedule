@@ -8,6 +8,24 @@ import {
 import GridBackground from './GridBackground';
 import CourseCard from './CourseCard';
 
+function HoursColumn() {
+  const hours = Array.from({ length: 15 }, (_, i) => i + 7);
+
+  return (
+    <div className='w-16 grid grid-rows-[auto,repeat(15,1fr)] h-full'>
+      <div className='h-10'></div>
+      {hours.map((hour) => (
+        <div
+          key={hour}
+          className='flex items-end justify-end pr-2 text-sm text-gray-500'
+        >
+          {hour % 12 || 12} {hour < 12 ? 'AM' : 'PM'}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Calendar() {
   const { selectedCourses } = useSchedule();
 
@@ -23,19 +41,11 @@ function Calendar() {
     return grouped;
   }, [coursesByDay]);
 
+  console.log('Grouped courses by day:', groupedCoursesByDay);
+
   return (
-    <div className='h-[840px] flex'>
-      <div className='w-16 flex flex-col'>
-        <div className='h-10'></div>
-        {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
-          <div
-            key={hour}
-            className='flex-1 flex items-end justify-end pr-2 text-xs text-gray-500'
-          >
-            {hour % 12 || 12} {hour < 12 ? 'AM' : 'PM'}
-          </div>
-        ))}
-      </div>
+    <div className='flex h-[65vh]'>
+      <HoursColumn />
       <div className='flex-grow grid grid-cols-5 relative'>
         <GridBackground />
         <div className='absolute inset-0 grid grid-cols-5'>

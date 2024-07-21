@@ -42,7 +42,7 @@ export const fetchSections = async () => {
       return {};
     }
 
-    console.log('Raw sections data:', response.data.slice(0, 3)); // Log first 3 sections
+    console.log('Raw sections data:', response.data.slice(0, 3));
 
     const sectionsByCourse = response.data.reduce((acc, section) => {
       if (!acc[section.course_id]) {

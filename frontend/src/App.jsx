@@ -14,11 +14,7 @@ function App() {
           <h1 className='text-3xl font-bold text-center mr-4'>
             Terrier Schedule
           </h1>
-          <img
-            src={rhett}
-            alt='Rhett'
-            className='h-16 object-contain group-hover:opacity-90'
-          />
+          <img src={rhett} alt='Rhett' className='h-16 object-contain' />
         </div>
       </header>
       <main className='flex-grow flex overflow-hidden'>
@@ -27,7 +23,7 @@ function App() {
         </div>
         <div className='w-1/2 p-4 overflow-auto'>
           <div className='mb-8'>
-            <div className='bg-gray-200 p-4 text-center'>
+            <div className='bg-gray-200 p-1 text-center'>
               <Calendar />
             </div>
           </div>
@@ -42,7 +38,7 @@ function App() {
                   <span>{`${course.major}${course.course_number}: ${course.short_title}`}</span>
                   <button
                     onClick={() => removeCourse(course.id)}
-                    className='bg-red-500 text-white px-2 py-1 rounded'
+                    className='hover:bg-red-800 bg-red-700 text-white px-2 py-1 rounded'
                   >
                     Remove
                   </button>

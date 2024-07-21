@@ -1,10 +1,15 @@
 export const timeToMinutes = (timeString) => {
+  console.log('Converting time:', timeString);
   const [time, period] = timeString.split(' ');
   let [hours, minutes] = time.split(':').map(Number);
   if (period.toLowerCase() === 'pm' && hours !== 12) {
     hours += 12;
+  } else if (period.toLowerCase() === 'am' && hours === 12) {
+    hours = 0;
   }
-  return hours * 60 + minutes;
+  const result = hours * 60 + minutes;
+  console.log('Converted to minutes:', result);
+  return result;
 };
 
 export const minutesToGridRow = (minutes) => {

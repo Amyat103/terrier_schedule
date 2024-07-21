@@ -33,6 +33,7 @@
 }
 
 .day-label {
+  height: 20px;
   text-align: center;
   font-weight: bold;
   padding: 5px 0;

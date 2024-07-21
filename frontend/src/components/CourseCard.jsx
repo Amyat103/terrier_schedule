@@ -6,15 +6,25 @@ function CourseCard({ course, index, groupSize }) {
   const endMinutes = timeToMinutes(course.end_time);
   const duration = endMinutes - startMinutes;
 
-  const top = ((startMinutes - 480) / (14 * 60)) * 100;
-  const height = (duration / (14 * 60)) * 100;
+  const calendarStart = 7 * 60;
+  const calendarDuration = 15 * 60;
+
+  const top = ((startMinutes - calendarStart) / calendarDuration) * 100;
+  const height = (duration / calendarDuration) * 100;
   const width = 100 / groupSize;
   const left = width * index;
 
-  const getRandomColor = () => {
-    const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 70%, 80%)`;
-  };
+  console.log('Calculated top:', top);
+  console.log('Calculated height:', height);
+
+  console.log('Course:', course);
+  console.log('Start time:', course.start_time);
+  console.log('End time:', course.end_time);
+  console.log('Start minutes:', startMinutes);
+  console.log('End minutes:', endMinutes);
+  console.log('Duration:', duration);
+  console.log('Calendar start:', calendarStart);
+  console.log('Calendar duration:', calendarDuration);
 
   return (
     <div
@@ -24,7 +34,7 @@ function CourseCard({ course, index, groupSize }) {
         height: `${height}%`,
         width: `${width}%`,
         left: `${left}%`,
-        backgroundColor: getRandomColor(),
+        backgroundColor: `hsl(${Math.random() * 360}, 70%, 80%)`,
       }}
     >
       <div className='font-bold'>{`${course.major}${course.course_number}`}</div>
