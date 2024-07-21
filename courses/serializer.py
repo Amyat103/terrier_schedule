@@ -10,10 +10,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class SectionSerializer(serializers.ModelSerializer):
-    course_id = serializers.UUIDField(source="course.course_id", read_only=True)
-    major = serializers.CharField(source="course.major", read_only=True)
-    course_number = serializers.CharField(source="course.course_number", read_only=True)
-    short_title = serializers.CharField(source="course.short_title", read_only=True)
+    course_id = serializers.UUIDField(read_only=True)
+    major = serializers.SerializerMethodField()
+    course_number = serializers.SerializerMethodField()
+    short_title = serializers.SerializerMethodField()
 
     class Meta:
         model = Section
@@ -36,14 +36,14 @@ class SectionSerializer(serializers.ModelSerializer):
             "is_active",
         ]
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        if not instance.course:
-            representation["course_id"] = None
-            representation["major"] = None
-            representation["course_number"] = None
-            representation["short_title"] = None
-        return representation
+    def get_major(self, obj):
+        return obj.course.major if obj.course else None
+
+    def get_course_number(self, obj):
+        return obj.course.course_number if obj.course else None
+
+    def get_short_title(self, obj):
+        return obj.course.short_title if obj.course else None
 
 
 class StoredCourseSerializer(serializers.ModelSerializer):
