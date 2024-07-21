@@ -7,7 +7,7 @@ export const ScheduleProvider = ({ children }) => {
   const [courses, setCourses] = useState([]);
   const [sections, setSections] = useState({});
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [courseColors, setCourseColors] = useState({});
+  const [sectionColors, setSectionColors] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -28,22 +28,14 @@ export const ScheduleProvider = ({ children }) => {
     loadData();
   }, []);
 
-  const addCourse = (course) => {
-    setSelectedCourses((prevSelected) => {
-      const newCourse = {
-        ...course,
-        days: course.days || '',
-        start_time: course.start_time || '',
-        end_time: course.end_time || '',
-      };
-      return [...prevSelected, newCourse];
-    });
+  const addCourse = (section) => {
+    setSelectedCourses((prevSelected) => [...prevSelected, section]);
 
-    setCourseColors((prevColors) => {
-      if (!prevColors[course.course_id]) {
+    setSectionColors((prevColors) => {
+      if (!prevColors[section.id]) {
         return {
           ...prevColors,
-          [course.course_id]: `hsl(${Math.random() * 360}, 70%, 80%)`,
+          [section.id]: `hsl(${Math.random() * 360}, 70%, 80%)`,
         };
       }
       return prevColors;
@@ -54,12 +46,12 @@ export const ScheduleProvider = ({ children }) => {
     setSelectedCourses((prevSelected) =>
       prevSelected.filter((course) => course.id !== courseId)
     );
-    // Optionally, you can also remove the color when a course is removed
-    // setCourseColors((prevColors) => {
-    //   const newColors = {...prevColors};
-    //   delete newColors[courseId];
-    //   return newColors;
-    // });
+    // Optionally, remove the color when a course is removed
+    setSectionColors((prevColors) => {
+      const newColors = { ...prevColors };
+      delete newColors[courseId];
+      return newColors;
+    });
   };
 
   return (
@@ -68,7 +60,7 @@ export const ScheduleProvider = ({ children }) => {
         courses,
         sections,
         selectedCourses,
-        courseColors,
+        sectionColors,
         addCourse,
         removeCourse,
         loading,

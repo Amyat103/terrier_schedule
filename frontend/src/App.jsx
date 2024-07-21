@@ -22,7 +22,7 @@ function App() {
           <CourseList />
         </div>
         <div className='w-1/2 p-4 overflow-auto'>
-          <div className='mb-8'>
+          <div className='mb-1'>
             <div className='bg-gray-200 p-1 text-center'>
               <NewCalendar />
             </div>

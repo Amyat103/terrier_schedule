@@ -1,5 +1,5 @@
 .calendar-container {
-  height: 65vh;
+  height: 70vh;
   overflow: hidden;
 }
 
@@ -9,6 +9,9 @@
 
 .rbc-time-view {
   border: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .rbc-time-header.rbc-overflowing {
@@ -16,11 +19,14 @@
 }
 
 .rbc-time-header-content {
-  border-left: none;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .rbc-header {
-  padding: 5px;
+  flex: 1;
   font-weight: bold;
   text-align: center;
   border-bottom: 1px solid #ddd;
@@ -40,6 +46,9 @@
 
 .rbc-timeslot-group {
   min-height: 40px;
+  height: auto !important;
+  flex: 1;
+  min-height: 0 !important;
 }
 
 .rbc-event {
@@ -47,25 +56,106 @@
   padding: 2px 5px;
 }
 
-.rbc-event-content {
-  font-size: 0.8em;
+.rbc-time-header-content {
+  display: flex;
+  justify-content: space-between;
 }
 
-.rbc-time-view .rbc-day-slot:first-child,
-.rbc-time-view .rbc-day-slot:last-child,
-.rbc-header:first-child,
-.rbc-header:last-child {
-  display: none;
+.rbc-header {
+  flex: 1;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
 }
 
 .rbc-time-view .rbc-day-slot {
   width: 20% !important;
 }
 
-.rbc-time-content > .rbc-time-gutter {
-  font-weight: bold;
+.rbc-event-content {
+  font-size: 0.8em;
+}
+
+.rbc-time-content {
+  flex: 1;
+  overflow: hidden !important;
+}
+
+.rbc-time-column {
+  display: flex;
+  flex-direction: column;
 }
 
 .rbc-today {
   background-color: inherit !important;
+}
+
+.rbc-current-time-indicator {
+  display: none;
+}
+
+.rbc-header > * {
+  font-size: initial;
+}
+
+.rbc-header {
+  border: none !important;
+}
+
+.rbc-time-header.rbc-overflowing {
+  border-right: none !important;
+}
+
+.rbc-header span {
+  direction: ltr;
+  text-align: center;
+  width: auto;
+  overflow: visible;
+  display: block;
+}
+
+.rbc-header span {
+  width: auto;
+  overflow: visible;
+}
+
+.rbc-today {
+  background-color: inherit !important;
+  border: none !important;
+}
+
+.rbc-time-view .rbc-header.rbc-today,
+.rbc-time-view .rbc-day-slot.rbc-today {
+  background-color: inherit !important;
+  border: none !important;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border: none !important;
+}
+
+.rbc-time-view .rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid #f0f0f0 !important;
+}
+
+.rbc-header {
+  padding: 0;
+  font-weight: bold;
+  font-size: 14px;
+  min-height: 0;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  line-height: normal;
+}
+
+.rbc-header span {
+  padding: 0;
+}
+
+.rbc-time-header-content {
+  border-left: none;
+}
+
+.rbc-time-header.rbc-overflowing {
+  border-right: none;
 }
