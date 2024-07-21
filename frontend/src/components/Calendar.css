@@ -1,0 +1,77 @@
+.calendar-container {
+  display: grid;
+  grid-template-columns: auto repeat(5, 1fr);
+  height: 100%;
+  position: relative;
+}
+
+.grid-background {
+  display: contents;
+}
+
+.time-labels {
+  grid-column: 1;
+  display: grid;
+  grid-template-rows: repeat(14, 1fr);
+  align-items: end;
+  padding-right: 10px;
+}
+
+.time-label {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.day-column {
+  display: grid;
+  grid-template-rows: auto repeat(14, 1fr);
+  border-left: 1px solid #ddd;
+}
+
+.day-column.even {
+  background-color: #f9f9f9;
+}
+
+.day-label {
+  text-align: center;
+  font-weight: bold;
+  padding: 5px 0;
+}
+
+.hour-cell {
+  border-top: 1px solid #eee;
+}
+
+.courses-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  pointer-events: none;
+}
+
+.course-group {
+  position: relative;
+}
+
+.course-card {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 0.8em;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.course-title {
+  font-weight: bold;
+}
+
+.course-time {
+  font-size: 0.9em;
+}

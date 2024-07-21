@@ -31,7 +31,13 @@ export const ScheduleProvider = ({ children }) => {
   const addCourse = (course) => {
     console.log('Adding course to context:', course);
     setSelectedCourses((prevSelected) => {
-      const newSelected = [...prevSelected, course];
+      const newCourse = {
+        ...course,
+        days: course.days || '',
+        start_time: course.start_time || '',
+        end_time: course.end_time || '',
+      };
+      const newSelected = [...prevSelected, newCourse];
       console.log('Updated Selected Courses in Context:', newSelected);
       return newSelected;
     });
