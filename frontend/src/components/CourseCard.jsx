@@ -14,18 +14,6 @@ function CourseCard({ course, index, groupSize }) {
   const width = 100 / groupSize;
   const left = width * index;
 
-  console.log('Calculated top:', top);
-  console.log('Calculated height:', height);
-
-  console.log('Course:', course);
-  console.log('Start time:', course.start_time);
-  console.log('End time:', course.end_time);
-  console.log('Start minutes:', startMinutes);
-  console.log('End minutes:', endMinutes);
-  console.log('Duration:', duration);
-  console.log('Calendar start:', calendarStart);
-  console.log('Calendar duration:', calendarDuration);
-
   return (
     <div
       className='absolute rounded shadow-sm p-1 text-xs overflow-hidden'

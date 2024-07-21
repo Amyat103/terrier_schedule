@@ -27,15 +27,15 @@ function App() {
               <NewCalendar />
             </div>
           </div>
-          <div>
+          <div className='flex flex-col items-center'>
             <h2 className='text-xl font-semibold mb-4'>Selected Courses</h2>
-            <ul className='divide-y divide-grey-200'>
+            <ul className='divide-y divide-gray-200 w-full px-4'>
               {selectedCourses.map((course) => (
                 <li
                   key={course.id}
-                  className='py-2 flex justify-between items-center hover:bg-gray-100 transition-colors duration-200'
+                  className='py-2 px-2 flex justify-between items-center hover:bg-gray-100 transition-colors duration-200'
                 >
-                  <span>{`${course.major}${course.course_number}: ${course.short_title}`}</span>
+                  <span>{`${course.short_title} ${course.class_section}: ${course.class_type}`}</span>
                   <button
                     onClick={() => removeCourse(course.id)}
                     className='hover:bg-red-800 bg-red-700 text-white px-2 py-1 rounded'

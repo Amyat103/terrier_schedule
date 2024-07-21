@@ -15,7 +15,7 @@ function SectionItem({ section }) {
   };
 
   return (
-    <div className='section-item p-2 border rounded flex flex-col h-full'>
+    <div className='section-item p-2 border rounded flex flex-col h-full hover:bg-gray-100 transition-colors duration-200'>
       {' '}
       <div className='flex-grow'>
         {' '}
