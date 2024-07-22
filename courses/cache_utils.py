@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 
 from django.core.cache import cache
+from django.db import connection
 
 from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
@@ -49,19 +50,19 @@ def update_courses_cache():
 def get_all_courses():
     total_batches = cache.get(f"{COURSES_CACHE_KEY}_total_batches")
     if total_batches is None:
+        logger.info("Cache miss: Fetching courses from database")
         return None
 
     all_courses = []
     for i in range(total_batches):
         batch = cache.get(f"{COURSES_CACHE_KEY}_{i}")
         if batch is None:
+            logger.info(f"Cache miss: Batch {i} not found in cache")
             return None
         all_courses.extend(batch)
 
+    logger.info("Cache hit: Retrieved all courses from cache")
     return all_courses
-
-
-from django.db import connection
 
 
 def update_sections_cache():
@@ -97,27 +98,30 @@ def update_sections_cache():
     logger.info("Updated total batches in cache")
 
 
-def get_all_courses():
-    courses = cache.get(COURSES_CACHE_KEY)
-    if not courses:
-        all_courses = Course.objects.all()
-        courses = CourseSerializer(all_courses, many=True).data
-        cache.set(COURSES_CACHE_KEY, courses, timeout=CACHE_DURATION.total_seconds())
-    return courses
+# def get_all_courses():
+#     courses = cache.get(COURSES_CACHE_KEY)
+#     if not courses:
+#         all_courses = Course.objects.all()
+#         courses = CourseSerializer(all_courses, many=True).data
+#         cache.set(COURSES_CACHE_KEY, courses, timeout=CACHE_DURATION.total_seconds())
+#     return courses
 
 
 def get_all_sections():
     total_batches = cache.get(f"{SECTIONS_CACHE_KEY}_total_batches")
     if total_batches is None:
+        logger.info("Cache miss: Fetching sections from database")
         return None
 
     all_sections = []
     for i in range(total_batches):
         batch = cache.get(f"{SECTIONS_CACHE_KEY}_{i}")
         if batch is None:
+            logger.info(f"Cache miss: Batch {i} not found in cache")
             return None
         all_sections.extend(batch)
 
+    logger.info("Cache hit: Retrieved all sections from cache")
     return all_sections
 
 

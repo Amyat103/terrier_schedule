@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn config.wsgi --log-file -
+web: python manage.py migrate && gunicorn config.wsgi --workers 3 --threads 2 --log-file -
