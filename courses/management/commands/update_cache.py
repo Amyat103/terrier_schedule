@@ -13,16 +13,13 @@ class Command(BaseCommand):
     help = "Updates the course and section cache"
 
     def handle(self, *args, **options):
-        print(f"Using Redis URL: {os.environ.get('REDIS_URL')}")
         try:
-            self.stdout.write(f"REDIS_URL: {os.environ.get('REDIS_URL', 'Not set')}")
-
             cache.set("test_key", "test_value", 10)
             result = cache.get("test_key")
             if result != "test_value":
-                raise Exception("Redis test failed")
+                raise Exception("Cache test failed")
 
-            self.stdout.write("Redis connection test passed")
+            self.stdout.write("Cache connection test passed")
 
             update_cache_after_fetch()
             self.stdout.write(self.style.SUCCESS("Successfully updated cache"))
