@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import SectionItem from './SectionItem';
+import PropTypes from 'prop-types';
 
 function SectionList({ courseId }) {
   const { sections } = useSchedule();
@@ -19,6 +20,11 @@ function SectionList({ courseId }) {
     </div>
   );
 }
+
+SectionList.propTypes = {
+  courseId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+};
 
 export const MemoizedSectionList = React.memo(SectionList);
 export default SectionList;
