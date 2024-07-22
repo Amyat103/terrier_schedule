@@ -13,6 +13,7 @@ class Command(BaseCommand):
     help = "Updates the course and section cache"
 
     def handle(self, *args, **options):
+        print(f"Using Redis URL: {os.environ.get('REDIS_URL')}")
         try:
             self.stdout.write(f"REDIS_URL: {os.environ.get('REDIS_URL', 'Not set')}")
 
