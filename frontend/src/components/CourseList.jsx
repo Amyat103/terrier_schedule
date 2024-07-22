@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
+import { FixedSizeList as List } from 'react-window';
+
 import { MemoizedCourseItem } from './CourseItem';
 
 function CourseList() {
@@ -40,7 +42,7 @@ function CourseList() {
 
   return (
     <div className='course-list h-full flex flex-col'>
-      <div className='mb-4 flex space-x-4'>
+      <div className='mb-2 flex space-x-4'>
         <select
           value={selectedMajor}
           onChange={(e) => setSelectedMajor(e.target.value)}
