@@ -185,4 +185,3 @@ CACHES = {
 
 print("Caching backend:", CACHES["default"]["BACKEND"])
 print("Caching location:", CACHES["default"]["LOCATION"])
-print("REDIS_URL:", os.getenv("REDIS_URL"))
