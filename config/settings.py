@@ -16,8 +16,6 @@ from pathlib import Path
 import dj_database_url
 import environ
 
-# import redis
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
@@ -178,23 +176,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
-# redis_url = (
-#     "redis://default:bPEvYsQzdAyPhrukTHnAFItYRHSrPrwj@redis.railway.internal:6379"
-# )
-# r = redis.Redis.from_url(redis_url)
-
-# try:
-#     response = r.ping()
-#     print("Redis response:", response)
-# except Exception as e:
-#     print("Error connecting to Redis:", e)
-
-# REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
-
-
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
         "LOCATION": os.getenv("MEMCACHE_PRIVATE_SERVER"),
     }
 }
+
+print("Caching backend:", CACHES["default"]["BACKEND"])
+print("Caching location:", CACHES["default"]["LOCATION"])
+print("REDIS_URL:", os.getenv("REDIS_URL"))
