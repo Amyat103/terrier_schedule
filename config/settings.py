@@ -176,12 +176,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
-redis_url = os.getenv("REDIS_URL")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/1")
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get("REDIS_URL", "redis://localhost:6379/1"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },

@@ -26,5 +26,4 @@ class Command(BaseCommand):
             update_cache_after_fetch()
             self.stdout.write(self.style.SUCCESS("Successfully updated cache"))
         except Exception as e:
-            logger.error(f"Cache update failed: {str(e)}")
             self.stdout.write(self.style.ERROR(f"Failed to update cache: {str(e)}"))
