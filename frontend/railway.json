@@ -1,12 +1,11 @@
 {
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    "buildCommand": "cd frontend && npm install && npm run build"
   },
   "deploy": {
-    "startCommand": "npm run start",
-    "healthcheckPath": "/",
-    "healthcheckTimeout": 100,
-    "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10
+    "staticDeployment": true,
+    "buildOutputPath": "frontend/dist",
+    "startCommand": "node frontend/dist/server.js"
   }
 }
