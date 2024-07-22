@@ -1,11 +1,11 @@
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd frontend && npm install && npm run build"
+    "buildCommand": "npm install && npm run build"
   },
   "deploy": {
     "staticDeployment": true,
-    "buildOutputPath": "frontend/dist",
-    "startCommand": "node frontend/dist/server.js"
+    "buildOutputPath": "dist",
+    "startCommand": "npx serve -s dist"
   }
 }
