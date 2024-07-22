@@ -1,5 +1,5 @@
-import React from 'react';
 import { useSchedule } from '../context/ScheduleContext';
+import PropTypes from 'prop-types';
 
 function SectionItem({ section }) {
   const { addCourse, removeCourse, selectedCourses } = useSchedule();
@@ -51,5 +51,20 @@ function SectionItem({ section }) {
     </div>
   );
 }
+
+SectionItem.propTypes = {
+  section: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    class_section: PropTypes.string.isRequired,
+    class_type: PropTypes.string.isRequired,
+    professor_name: PropTypes.string.isRequired,
+    days: PropTypes.string.isRequired,
+    start_time: PropTypes.string.isRequired,
+    end_time: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
+    enrollment_available: PropTypes.number.isRequired,
+    class_capacity: PropTypes.number.isRequired,
+  }).isRequired,
+};
 
 export default SectionItem;

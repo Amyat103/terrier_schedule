@@ -1,5 +1,6 @@
 import React from 'react';
 import { timeToMinutes } from '../utils/calendarUtils';
+import PropTypes from 'prop-types';
 
 function CourseCard({ course, index, groupSize }) {
   const startMinutes = timeToMinutes(course.start_time);
@@ -30,5 +31,16 @@ function CourseCard({ course, index, groupSize }) {
     </div>
   );
 }
+
+CourseCard.propTypes = {
+  course: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    short_title: PropTypes.string.isRequired,
+    start_time: PropTypes.string.isRequired,
+    end_time: PropTypes.string.isRequired,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+  groupSize: PropTypes.number.isRequired,
+};
 
 export default React.memo(CourseCard);

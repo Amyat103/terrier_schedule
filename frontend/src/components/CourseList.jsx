@@ -1,18 +1,12 @@
-import React, {
-  useState,
-  useMemo,
-  useRef,
-  useCallback,
-  useEffect,
-} from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import { MemoizedCourseItem } from './CourseItem';
+import CustomDropdown from './CustomDropdown';
 
 const ITEMS_PER_BATCH = 20;
 
 function CourseList() {
   const { courses, loading, error } = useSchedule();
-  const [searchTerm, setSearchTerm] = useState('');
   const [expandedCourseId, setExpandedCourseId] = useState(null);
   const [selectedMajor, setSelectedMajor] = useState('');
   const [courseNumber, setCourseNumber] = useState('');
@@ -86,18 +80,12 @@ function CourseList() {
   return (
     <div className='course-list h-full flex flex-col'>
       <div className='mb-4 flex space-x-4'>
-        <select
+        <CustomDropdown
+          options={majors}
           value={selectedMajor}
-          onChange={(e) => setSelectedMajor(e.target.value)}
-          className='p-2 border rounded'
-        >
-          <option value=''>All Majors</option>
-          {majors.map((major) => (
-            <option key={major} value={major}>
-              {major}
-            </option>
-          ))}
-        </select>
+          onChange={(major) => setSelectedMajor(major)}
+        />
+
         <input
           type='text'
           placeholder='Course Number'
