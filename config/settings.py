@@ -193,7 +193,7 @@ REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
         "LOCATION": os.getenv("MEMCACHE_PRIVATE_SERVER"),
     }
 }
