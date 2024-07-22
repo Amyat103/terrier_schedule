@@ -179,7 +179,7 @@ CORS_ALLOWED_ORIGINS = [
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": os.getenv("MEMCACHE_PRIVATE_SERVER"),
+        "LOCATION": os.getenv("MEMCACHED_URL", "roundhouse.proxy.rlwy.net:57907"),
     }
 }
 

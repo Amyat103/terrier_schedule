@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
+import socket
 import sys
+
+hostname = "memcached-dlwp.railway.internal"
+try:
+    print(f"IP Address: {socket.gethostbyname(hostname)}")
+except socket.error as e:
+    print(f"Failed to resolve {hostname}: {e}")
 
 
 def main():
