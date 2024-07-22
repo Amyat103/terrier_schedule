@@ -1,8 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+  useEffect,
+} from 'react';
 import { useSchedule } from '../context/ScheduleContext';
-import { FixedSizeList as List } from 'react-window';
-
 import { MemoizedCourseItem } from './CourseItem';
+
+const ITEMS_PER_BATCH = 20;
 
 function CourseList() {
   const { courses, loading, error } = useSchedule();
@@ -11,6 +17,8 @@ function CourseList() {
   const [selectedMajor, setSelectedMajor] = useState('');
   const [courseNumber, setCourseNumber] = useState('');
   const [generalSearch, setGeneralSearch] = useState('');
+  const [displayCount, setDisplayCount] = useState(ITEMS_PER_BATCH);
+  const scrollContainerRef = useRef(null);
 
   const majors = useMemo(() => {
     return [...new Set(courses.map((course) => course.major))].sort();
@@ -33,16 +41,51 @@ function CourseList() {
     });
   }, [courses, selectedMajor, courseNumber, generalSearch]);
 
+  const coursesToDisplay = useMemo(() => {
+    return filteredCourses.slice(0, displayCount);
+  }, [filteredCourses, displayCount]);
+
   const handleExpand = (courseId) => {
     setExpandedCourseId(expandedCourseId === courseId ? null : courseId);
   };
+
+  const checkScrollPosition = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      scrollContainerRef.current;
+    if (
+      scrollHeight - scrollTop - clientHeight < 200 &&
+      displayCount < filteredCourses.length
+    ) {
+      setDisplayCount((prev) =>
+        Math.min(prev + ITEMS_PER_BATCH, filteredCourses.length)
+      );
+    }
+  }, [displayCount, filteredCourses.length]);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', checkScrollPosition);
+    }
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', checkScrollPosition);
+      }
+    };
+  }, [checkScrollPosition]);
+
+  useEffect(() => {
+    setDisplayCount(ITEMS_PER_BATCH);
+  }, [selectedMajor, courseNumber, generalSearch]);
 
   if (loading) return <div>Loading courses...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className='course-list h-full flex flex-col'>
-      <div className='mb-2 flex space-x-4'>
+      <div className='mb-4 flex space-x-4'>
         <select
           value={selectedMajor}
           onChange={(e) => setSelectedMajor(e.target.value)}
@@ -70,8 +113,8 @@ function CourseList() {
           onChange={(e) => setGeneralSearch(e.target.value)}
         />
       </div>
-      <div className='overflow-auto flex-grow'>
-        {filteredCourses.map((course) => (
+      <div ref={scrollContainerRef} className='overflow-auto flex-grow'>
+        {coursesToDisplay.map((course) => (
           <MemoizedCourseItem
             key={course.course_id}
             course={course}
@@ -79,6 +122,9 @@ function CourseList() {
             onExpand={handleExpand}
           />
         ))}
+        {displayCount < filteredCourses.length && (
+          <div className='text-center py-4'>Loading more courses...</div>
+        )}
       </div>
     </div>
   );
