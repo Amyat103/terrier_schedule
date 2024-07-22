@@ -25,5 +25,5 @@ django-cors-headers==3.14.0
 whitenoise==6.2.0
 tqdm
 django-redis==5.4.0  
-python-memcached==X.X.X
+# python-memcached==X.X.X
 pymemcache==3.5.0
