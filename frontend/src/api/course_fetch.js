@@ -4,7 +4,7 @@ const API_URL =
   import.meta.env.VITE_API_URL ||
   'https://web-production-08125.up.railway.app/api';
 
-const CHUNK_SIZE = 1000000;
+// const CHUNK_SIZE = 1000000;
 let memoryStorage = {};
 
 const getDataVersion = async () => {
@@ -49,42 +49,41 @@ const safeGetItem = (key) => {
 //   });
 //   safeSetItem(`${key}_chunks`, chunks.length.toString());
 // };
-
 const storeData = (key, data) => {
   try {
     const jsonString = JSON.stringify(data);
     localStorage.setItem(key, jsonString);
     return true;
   } catch (e) {
-    console.warn(
-      `Failed to store ${key} in localStorage. Using memory storage.`
-    );
-    memoryStorage[key] = data;
+    console.warn(`Failed to store ${key} in localStorage: ${e.message}`);
     return false;
   }
 };
 
 const retrieveData = (key) => {
-  const chunkCount = parseInt(safeGetItem(`${key}_chunks`), 10);
-  if (isNaN(chunkCount)) return null;
-
-  let jsonString = '';
-  for (let i = 0; i < chunkCount; i++) {
-    jsonString += safeGetItem(`${key}_${i}`) || '';
+  try {
+    const jsonString = localStorage.getItem(key);
+    return jsonString ? JSON.parse(jsonString) : null;
+  } catch (e) {
+    console.error(
+      `Failed to retrieve or parse ${key} from localStorage: ${e.message}`
+    );
+    return null;
   }
-  return JSON.parse(jsonString);
 };
 
 export const fetchCourses = async () => {
   try {
-    const cachedVersion = safeGetItem('coursesVersion');
+    const cachedVersion = localStorage.getItem('coursesVersion');
     const serverVersion = await getDataVersion();
 
     if (cachedVersion !== serverVersion) {
       console.log('Fetching fresh course data from server');
       const response = await axios.get(`${API_URL}/courses/`);
-      storeData('coursesData', response.data);
-      safeSetItem('coursesVersion', serverVersion);
+      const success = storeData('coursesData', response.data);
+      if (success) {
+        localStorage.setItem('coursesVersion', serverVersion);
+      }
       return response.data;
     } else {
       console.log('Using cached course data');
@@ -92,7 +91,7 @@ export const fetchCourses = async () => {
     }
   } catch (error) {
     console.error('Error fetching courses:', error);
-    throw error;
+    return [];
   }
 };
 
