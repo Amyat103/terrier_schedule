@@ -1,4 +1,5 @@
 import axios from 'axios';
+import LZString from 'lz-string';
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
@@ -52,7 +53,8 @@ const safeGetItem = (key) => {
 const storeData = (key, data) => {
   try {
     const jsonString = JSON.stringify(data);
-    localStorage.setItem(key, jsonString);
+    const compressed = LZString.compress(jsonString);
+    localStorage.setItem(key, compressed);
     return true;
   } catch (e) {
     console.warn(`Failed to store ${key} in localStorage: ${e.message}`);
@@ -62,8 +64,10 @@ const storeData = (key, data) => {
 
 const retrieveData = (key) => {
   try {
-    const jsonString = localStorage.getItem(key);
-    return jsonString ? JSON.parse(jsonString) : null;
+    const compressed = localStorage.getItem(key);
+    if (!compressed) return null;
+    const jsonString = LZString.decompress(compressed);
+    return JSON.parse(jsonString);
   } catch (e) {
     console.error(
       `Failed to retrieve or parse ${key} from localStorage: ${e.message}`
