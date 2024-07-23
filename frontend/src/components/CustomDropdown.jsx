@@ -63,7 +63,7 @@ function CustomDropdown({ options, value, onChange }) {
   return (
     <div className='relative' ref={containerRef}>
       <button
-        className='p-2 border border-gray-300 rounded shadow-sm w-full text-left flex justify-between items-center'
+        className='font-bold p-2 border border-gray-300 rounded shadow-sm w-full text-left flex justify-between items-center'
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{value || 'Choose Major'}</span>

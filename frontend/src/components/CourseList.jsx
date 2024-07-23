@@ -95,7 +95,7 @@ function CourseList() {
 
   return (
     <div className='course-list h-full flex flex-col'>
-      <div className='mb-4 flex space-x-4 items-center'>
+      <div className='text-xs mb-4 flex space-x-4 items-center'>
         <CustomDropdown
           options={majors}
           value={selectedMajor}
