@@ -17,16 +17,19 @@ function ContactPopup({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('Sending message:', { email, message });
       const response = await axios.post('/api/send-contact-email/', {
         email,
         message,
       });
+      console.log('Response:', response);
       if (response.data.status === 'success') {
         alert('Message sent successfully!');
         setEmail('');
         setMessage('');
         onClose();
       } else {
+        console.error('Error response:', response.data);
         alert('Failed to send message. Please try again.');
       }
     } catch (error) {
@@ -55,7 +58,7 @@ function ContactPopup({ isOpen, onClose }) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder='Your email'
                 required
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 text-black' // Added text-black here
               />
               <textarea
                 value={message}
@@ -63,7 +66,7 @@ function ContactPopup({ isOpen, onClose }) {
                 placeholder='Your message'
                 required
                 maxLength={maxChars}
-                className='w-full px-3 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700'
+                className='w-full px-3 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 text-black' // Added text-black here
                 rows='4'
               />
               <div className='text-right text-sm text-gray-500'>
