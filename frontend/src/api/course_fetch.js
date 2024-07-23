@@ -38,16 +38,30 @@ const safeGetItem = (key) => {
   }
 };
 
+// const storeData = (key, data) => {
+//   const jsonString = JSON.stringify(data);
+//   const chunks = [];
+//   for (let i = 0; i < jsonString.length; i += CHUNK_SIZE) {
+//     chunks.push(jsonString.slice(i, i + CHUNK_SIZE));
+//   }
+//   chunks.forEach((chunk, index) => {
+//     safeSetItem(`${key}_${index}`, chunk);
+//   });
+//   safeSetItem(`${key}_chunks`, chunks.length.toString());
+// };
+
 const storeData = (key, data) => {
-  const jsonString = JSON.stringify(data);
-  const chunks = [];
-  for (let i = 0; i < jsonString.length; i += CHUNK_SIZE) {
-    chunks.push(jsonString.slice(i, i + CHUNK_SIZE));
+  try {
+    const jsonString = JSON.stringify(data);
+    localStorage.setItem(key, jsonString);
+    return true;
+  } catch (e) {
+    console.warn(
+      `Failed to store ${key} in localStorage. Using memory storage.`
+    );
+    memoryStorage[key] = data;
+    return false;
   }
-  chunks.forEach((chunk, index) => {
-    safeSetItem(`${key}_${index}`, chunk);
-  });
-  safeSetItem(`${key}_chunks`, chunks.length.toString());
 };
 
 const retrieveData = (key) => {
