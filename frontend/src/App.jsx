@@ -3,18 +3,29 @@ import CourseList from './components/CourseList';
 import { useSchedule } from './context/ScheduleContext';
 import rhett from '../assets/rhett.png';
 import NewCalendar from './components/NewCalendar';
+import ContactPopup from './components/ContactPopup';
 
 function App() {
   const { selectedCourses, removeCourse } = useSchedule();
+  const [isContactPopupOpen, setIsContactPopupOpen] = useState(false);
 
   return (
     <div className='App flex flex-col h-screen'>
       <header className='bg-red-900 text-white p-1 w-full'>
-        <div className='container mx-auto flex items-center justify-center group'>
-          <h1 className='text-3xl font-bold text-center mr-4'>
-            Terrier Schedule
-          </h1>
-          <img src={rhett} alt='Rhett' className='h-16 object-contain' />
+        <div className='container mx-auto flex items-center justify-between'>
+          <div className='w-1/3'></div>
+          <div className='flex items-center group'>
+            <h1 className='text-3xl font-bold text-center mr-4'>
+              Terrier Schedule
+            </h1>
+            <img src={rhett} alt='Rhett' className='h-16 object-contain' />
+          </div>
+          <button
+            onClick={() => setIsContactPopupOpen(true)}
+            className='bg-white text-red-900 px-4 py-2 rounded hover:bg-gray-100'
+          >
+            Contact
+          </button>
         </div>
       </header>
       <main className='flex-grow flex overflow-hidden'>

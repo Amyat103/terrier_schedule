@@ -1,9 +1,13 @@
+import json
 import logging
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.decorators.http import require_GET
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_POST
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -84,3 +88,35 @@ def section_list(request):
 def get_data_version(request):
     version = timezone.now().strftime("%Y%m%d")
     return JsonResponse({"version": version})
+
+
+@csrf_exempt
+@require_POST
+def send_contact_email(request):
+    try:
+        data = json.loads(request.body)
+        from_email = data.get("email")
+        message = data.get("message")
+
+        content = f"From: {from_email}\n\nMessage: {message}"
+
+        response = requests.post(
+            f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
+            auth=("api", settings.MAILGUN_API_KEY),
+            data={
+                "from": f"Contact Form <mailgun@{settings.MAILGUN_DOMAIN}>",
+                "to": ["amyat@bu.edu"],
+                "subject": "New contact form submission",
+                "text": content,
+            },
+        )
+
+        if response.status_code == 200:
+            return JsonResponse({"status": "success"})
+        else:
+            return JsonResponse(
+                {"status": "error", "message": "Failed to send email"}, status=500
+            )
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)

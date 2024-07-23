@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import { MemoizedCourseItem } from './CourseItem';
 import CustomDropdown from './CustomDropdown';
+import ToggleButton from './ToggleButton';
 
 const ITEMS_PER_BATCH = 20;
 
@@ -13,6 +14,10 @@ function CourseList() {
   const [generalSearch, setGeneralSearch] = useState('');
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_BATCH);
   const scrollContainerRef = useRef(null);
+  const [showRegistrableOnly, setShowRegistrableOnly] = useState(() => {
+    const saved = localStorage.getItem('showRegistrableOnly');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
 
   const majors = useMemo(() => {
     return [...new Set(courses.map((course) => course.major))].sort();
@@ -71,6 +76,13 @@ function CourseList() {
   }, [checkScrollPosition]);
 
   useEffect(() => {
+    localStorage.setItem(
+      'showRegistrableOnly',
+      JSON.stringify(showRegistrableOnly)
+    );
+  }, [showRegistrableOnly]);
+
+  useEffect(() => {
     setDisplayCount(ITEMS_PER_BATCH);
   }, [selectedMajor, courseNumber, generalSearch]);
 
@@ -79,13 +91,12 @@ function CourseList() {
 
   return (
     <div className='course-list h-full flex flex-col'>
-      <div className='mb-4 flex space-x-4'>
+      <div className='mb-4 flex space-x-4 items-center'>
         <CustomDropdown
           options={majors}
           value={selectedMajor}
           onChange={(major) => setSelectedMajor(major)}
         />
-
         <input
           type='text'
           placeholder='Course Number'
@@ -99,6 +110,11 @@ function CourseList() {
           className='flex-grow p-2 border rounded'
           value={generalSearch}
           onChange={(e) => setGeneralSearch(e.target.value)}
+        />
+        <ToggleButton
+          label='Show Registrable Only'
+          checked={showRegistrableOnly}
+          onChange={setShowRegistrableOnly}
         />
       </div>
       <div ref={scrollContainerRef} className='overflow-auto flex-grow'>

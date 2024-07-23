@@ -27,3 +27,4 @@ tqdm
 # python-memcached==X.X.X
 pymemcache==3.5.0
 whitenoise==6.2.0
+requests==2.26.0

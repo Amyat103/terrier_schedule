@@ -66,7 +66,7 @@ function CustomDropdown({ options, value, onChange }) {
         className='p-2 border border-gray-300 rounded shadow-sm w-full text-left flex justify-between items-center'
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{value || 'Select an option'}</span>
+        <span>{value || 'Choose Major'}</span>
         <FontAwesomeIcon
           icon={faChevronDown}
           className={`text-red-600 text-lg transition-transform duration-300 ease-in-out ml-2 ${
