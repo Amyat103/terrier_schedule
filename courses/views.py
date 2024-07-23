@@ -2,6 +2,8 @@ import logging
 
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
+from django.views.decorators.http import require_GET
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,17 +25,15 @@ from .cache_utils import get_all_courses, get_all_sections
 class CourseViewSet(ReadOnlyModelViewSet):
     serializer_class = CourseSerializer
 
-    def list(self, request):
-        courses = get_all_courses()
-        return Response(courses)
+    def get_queryset(self):
+        return Course.objects.prefetch_related("sections")
 
 
 class SectionViewSet(ReadOnlyModelViewSet):
     serializer_class = SectionSerializer
 
-    def list(self, request):
-        sections = get_all_sections()
-        return Response(sections)
+    def get_queryset(self):
+        return Section.objects.select_related("course")
 
 
 def course_schedule_view(request):
@@ -78,3 +78,9 @@ def section_list(request):
     else:
         sections = get_all_sections()
     return Response(sections)
+
+
+@require_GET
+def get_data_version(request):
+    version = timezone.now().strftime("%Y%m%d")
+    return JsonResponse({"version": version})

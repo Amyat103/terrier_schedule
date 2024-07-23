@@ -25,6 +25,7 @@ from courses.views import (
     SectionViewSet,
     course_schedule_view,
     debug_view,
+    get_data_version,
 )
 
 router = DefaultRouter()
@@ -42,4 +43,5 @@ urlpatterns = [
     path("schedule/", course_schedule_view, name="course_schedule"),
     path("api/debug/", debug_view, name="debug_view"),
     path("", catch_all),
+    path("api/data-version/", get_data_version, name="data_version"),
 ]
