@@ -4,7 +4,8 @@ const API_URL =
   import.meta.env.VITE_API_URL ||
   'https://web-production-08125.up.railway.app/api';
 
-const CHUNK_SIZE = 5000000;
+const CHUNK_SIZE = 1000000;
+let memoryStorage = {};
 
 const getDataVersion = async () => {
   try {
@@ -16,44 +17,60 @@ const getDataVersion = async () => {
   }
 };
 
-const chunkString = (str) => {
-  const chunks = [];
-  for (let i = 0; i < str.length; i += CHUNK_SIZE) {
-    chunks.push(str.slice(i, i + CHUNK_SIZE));
+const safeSetItem = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    console.warn(
+      `Failed to set ${key} in localStorage. Falling back to memory storage.`
+    );
+    memoryStorage[key] = value;
+    return false;
   }
-  return chunks;
+};
+
+const safeGetItem = (key) => {
+  try {
+    return localStorage.getItem(key) || memoryStorage[key];
+  } catch (e) {
+    return memoryStorage[key];
+  }
 };
 
 const storeData = (key, data) => {
   const jsonString = JSON.stringify(data);
-  const chunks = chunkString(jsonString);
+  const chunks = [];
+  for (let i = 0; i < jsonString.length; i += CHUNK_SIZE) {
+    chunks.push(jsonString.slice(i, i + CHUNK_SIZE));
+  }
   chunks.forEach((chunk, index) => {
-    localStorage.setItem(`${key}_${index}`, chunk);
+    safeSetItem(`${key}_${index}`, chunk);
   });
-  localStorage.setItem(`${key}_chunks`, chunks.length.toString());
+  safeSetItem(`${key}_chunks`, chunks.length.toString());
 };
 
 const retrieveData = (key) => {
-  const chunkCount = parseInt(localStorage.getItem(`${key}_chunks`), 10);
+  const chunkCount = parseInt(safeGetItem(`${key}_chunks`), 10);
   if (isNaN(chunkCount)) return null;
 
   let jsonString = '';
   for (let i = 0; i < chunkCount; i++) {
-    jsonString += localStorage.getItem(`${key}_${i}`) || '';
+    jsonString += safeGetItem(`${key}_${i}`) || '';
   }
   return JSON.parse(jsonString);
 };
 
 export const fetchCourses = async () => {
   try {
-    const cachedVersion = localStorage.getItem('coursesVersion');
+    const cachedVersion = safeGetItem('coursesVersion');
     const serverVersion = await getDataVersion();
 
     if (cachedVersion !== serverVersion) {
       console.log('Fetching fresh course data from server');
       const response = await axios.get(`${API_URL}/courses/`);
       storeData('coursesData', response.data);
-      localStorage.setItem('coursesVersion', serverVersion);
+      safeSetItem('coursesVersion', serverVersion);
       return response.data;
     } else {
       console.log('Using cached course data');
@@ -67,7 +84,7 @@ export const fetchCourses = async () => {
 
 export const fetchSections = async () => {
   try {
-    const cachedVersion = localStorage.getItem('sectionsVersion');
+    const cachedVersion = safeGetItem('sectionsVersion');
     const serverVersion = await getDataVersion();
 
     if (cachedVersion !== serverVersion) {
@@ -81,7 +98,7 @@ export const fetchSections = async () => {
         return acc;
       }, {});
       storeData('sectionsData', sectionsByCourse);
-      localStorage.setItem('sectionsVersion', serverVersion);
+      safeSetItem('sectionsVersion', serverVersion);
       return sectionsByCourse;
     } else {
       console.log('Using cached section data');
