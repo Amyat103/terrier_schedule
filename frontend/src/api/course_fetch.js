@@ -3,7 +3,8 @@ import axios from 'axios';
 const API_URL =
   import.meta.env.VITE_API_URL ||
   'https://web-production-08125.up.railway.app/api';
-console.log('API_URL:', API_URL);
+
+const CHUNK_SIZE = 1000;
 
 const getDataVersion = async () => {
   try {
@@ -15,6 +16,27 @@ const getDataVersion = async () => {
   }
 };
 
+const storeDataInChunks = (key, data) => {
+  const chunkedData = [];
+  for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+    chunkedData.push(data.slice(i, i + CHUNK_SIZE));
+  }
+  chunkedData.forEach((chunk, index) => {
+    localStorage.setItem(`${key}_${index}`, JSON.stringify(chunk));
+  });
+  localStorage.setItem(`${key}_chunkCount`, chunkedData.length.toString());
+};
+
+const getDataFromChunks = (key) => {
+  const chunkCount = parseInt(localStorage.getItem(`${key}_chunkCount`), 10);
+  let data = [];
+  for (let i = 0; i < chunkCount; i++) {
+    const chunk = JSON.parse(localStorage.getItem(`${key}_${i}`));
+    data = data.concat(chunk);
+  }
+  return data;
+};
+
 export const fetchCourses = async () => {
   try {
     const cachedVersion = localStorage.getItem('coursesVersion');
@@ -23,12 +45,12 @@ export const fetchCourses = async () => {
     if (cachedVersion !== serverVersion) {
       console.log('Fetching fresh course data from server');
       const response = await axios.get(`${API_URL}/courses/`);
-      localStorage.setItem('coursesData', JSON.stringify(response.data));
+      storeDataInChunks('coursesData', response.data);
       localStorage.setItem('coursesVersion', serverVersion);
       return response.data;
     } else {
       console.log('Using cached course data');
-      return JSON.parse(localStorage.getItem('coursesData'));
+      return getDataFromChunks('coursesData');
     }
   } catch (error) {
     console.error('Error fetching courses:', error);
@@ -51,12 +73,13 @@ export const fetchSections = async () => {
         acc[section.course_id].push(section);
         return acc;
       }, {});
-      localStorage.setItem('sectionsData', JSON.stringify(sectionsByCourse));
+      storeDataInChunks('sectionsData', Object.entries(sectionsByCourse));
       localStorage.setItem('sectionsVersion', serverVersion);
       return sectionsByCourse;
     } else {
       console.log('Using cached section data');
-      return JSON.parse(localStorage.getItem('sectionsData'));
+      const sectionEntries = getDataFromChunks('sectionsData');
+      return Object.fromEntries(sectionEntries);
     }
   } catch (error) {
     console.error('Error fetching sections:', error);
