@@ -26,6 +26,10 @@ function App() {
           >
             Contact
           </button>
+          <ContactPopup
+            isOpen={isContactPopupOpen}
+            onClose={() => setIsContactPopupOpen(false)}
+          />
         </div>
       </header>
       <main className='flex-grow flex overflow-hidden'>

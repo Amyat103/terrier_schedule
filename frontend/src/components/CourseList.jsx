@@ -14,10 +14,7 @@ function CourseList() {
   const [generalSearch, setGeneralSearch] = useState('');
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_BATCH);
   const scrollContainerRef = useRef(null);
-  const [showRegistrableOnly, setShowRegistrableOnly] = useState(() => {
-    const saved = localStorage.getItem('showRegistrableOnly');
-    return saved !== null ? JSON.parse(saved) : true;
-  });
+  const [showRegistrableOnly, setShowRegistrableOnly] = useState(true);
 
   const majors = useMemo(() => {
     return [...new Set(courses.map((course) => course.major))].sort();
@@ -36,9 +33,23 @@ function CourseList() {
             .toLowerCase()
             .includes(generalSearch.toLowerCase())
         : true;
-      return matchesMajor && matchesCourseNumber && matchesGeneral;
+      const matchesRegistrable = showRegistrableOnly
+        ? course.is_registerable
+        : true;
+      return (
+        matchesMajor &&
+        matchesCourseNumber &&
+        matchesGeneral &&
+        matchesRegistrable
+      );
     });
-  }, [courses, selectedMajor, courseNumber, generalSearch]);
+  }, [
+    courses,
+    selectedMajor,
+    courseNumber,
+    generalSearch,
+    showRegistrableOnly,
+  ]);
 
   const coursesToDisplay = useMemo(() => {
     return filteredCourses.slice(0, displayCount);
@@ -74,13 +85,6 @@ function CourseList() {
       }
     };
   }, [checkScrollPosition]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      'showRegistrableOnly',
-      JSON.stringify(showRegistrableOnly)
-    );
-  }, [showRegistrableOnly]);
 
   useEffect(() => {
     setDisplayCount(ITEMS_PER_BATCH);
