@@ -179,7 +179,11 @@ LOGGING = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
+    "https://terrier-schedule.up.railway.app/",
+    "terrier-schedule.up.railway.app",
     "http://localhost:5173",
+    "terrier-schedule.dev",
+    "www.terrier-schedule.dev",
 ]
 
 CACHES = {

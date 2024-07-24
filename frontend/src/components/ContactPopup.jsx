@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  'https://web-production-08125.up.railway.app/api';
+
 function ContactPopup({ isOpen, onClose }) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -18,11 +22,12 @@ function ContactPopup({ isOpen, onClose }) {
     e.preventDefault();
     try {
       console.log('Sending message:', { email, message });
-      const response = await axios.post('/api/send-contact-email/', {
+      console.log('API URL:', API_URL);
+      const response = await axios.post(`${API_URL}/send-contact-email/`, {
         email,
         message,
       });
-      console.log('Response:', response);
+      console.log('Full Response:', response);
       if (response.data.status === 'success') {
         alert('Message sent successfully!');
         setEmail('');
@@ -34,6 +39,14 @@ function ContactPopup({ isOpen, onClose }) {
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        console.error('Error status:', error.response.status);
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
       alert('An error occurred. Please try again later.');
     }
   };
