@@ -185,6 +185,14 @@ CORS_ALLOWED_ORIGINS = [
     "https://terrier-schedule.up.railway.app",
     "web-production-08125.up.railway.app",
     "https://web-production-08125.up.railway.app/",
+    "terrier-schedule.dev",
+    "www.terrier-schedule.dev",
+    "terrier-schedule.up.railway.app",
+    "https://terrier-schedule.dev/",
+    "https://web-production-08125.up.railway.app/",
+    "https://web-production-08125.up.railway.app/api/",
+    "https://www.terrier-schedule.dev/",
+    "https://terrier-schedule.up.railway.app/",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
