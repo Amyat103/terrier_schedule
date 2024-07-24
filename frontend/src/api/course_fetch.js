@@ -11,6 +11,7 @@ let memoryStorage = {};
 const getDataVersion = async () => {
   try {
     const response = await axios.get(`${API_URL}/data-version/`);
+    console.log('Sections API response:', response.data);
     return response.data.version;
   } catch (error) {
     console.error('Error fetching data version:', error);
@@ -107,13 +108,15 @@ export const fetchSections = async () => {
     if (cachedVersion !== serverVersion) {
       console.log('Fetching fresh section data from server');
       const response = await axios.get(`${API_URL}/sections/`);
-      const sectionsByCourse = response.data.reduce((acc, section) => {
-        if (!acc[section.course_id]) {
-          acc[section.course_id] = [];
-        }
-        acc[section.course_id].push(section);
-        return acc;
-      }, {});
+      const sectionsByCourse = Array.isArray(response.data)
+        ? response.data.reduce((acc, section) => {
+            if (!acc[section.course_id]) {
+              acc[section.course_id] = [];
+            }
+            acc[section.course_id].push(section);
+            return acc;
+          }, {})
+        : {};
       storeData('sectionsData', sectionsByCourse);
       safeSetItem('sectionsVersion', serverVersion);
       return sectionsByCourse;

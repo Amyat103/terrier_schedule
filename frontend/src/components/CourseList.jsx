@@ -3,6 +3,7 @@ import { useSchedule } from '../context/ScheduleContext';
 import { MemoizedCourseItem } from './CourseItem';
 import CustomDropdown from './CustomDropdown';
 import ToggleButton from './ToggleButton';
+import { faBullseye } from '@fortawesome/free-solid-svg-icons';
 
 const ITEMS_PER_BATCH = 20;
 
@@ -14,35 +15,41 @@ function CourseList() {
   const [generalSearch, setGeneralSearch] = useState('');
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_BATCH);
   const scrollContainerRef = useRef(null);
-  const [showRegistrableOnly, setShowRegistrableOnly] = useState(true);
+  const [showRegistrableOnly, setShowRegistrableOnly] = useState(false);
+
+  console.log('Courses data:', courses);
 
   const majors = useMemo(() => {
-    return [...new Set(courses.map((course) => course.major))].sort();
+    return Array.isArray(courses)
+      ? [...new Set(courses.map((course) => course.major))].sort()
+      : [];
   }, [courses]);
 
   const filteredCourses = useMemo(() => {
-    return courses.filter((course) => {
-      const matchesMajor = selectedMajor
-        ? course.major === selectedMajor
-        : true;
-      const matchesCourseNumber = courseNumber
-        ? course.course_number.includes(courseNumber)
-        : true;
-      const matchesGeneral = generalSearch
-        ? `${course.major} ${course.course_number} ${course.short_title} ${course.full_title} ${course.description}`
-            .toLowerCase()
-            .includes(generalSearch.toLowerCase())
-        : true;
-      const matchesRegistrable = showRegistrableOnly
-        ? course.is_registerable
-        : true;
-      return (
-        matchesMajor &&
-        matchesCourseNumber &&
-        matchesGeneral &&
-        matchesRegistrable
-      );
-    });
+    return Array.isArray(courses)
+      ? courses.filter((course) => {
+          const matchesMajor = selectedMajor
+            ? course.major === selectedMajor
+            : true;
+          const matchesCourseNumber = courseNumber
+            ? course.course_number.includes(courseNumber)
+            : true;
+          const matchesGeneral = generalSearch
+            ? `${course.major} ${course.course_number} ${course.short_title} ${course.full_title} ${course.description}`
+                .toLowerCase()
+                .includes(generalSearch.toLowerCase())
+            : true;
+          const matchesRegistrable = showRegistrableOnly
+            ? course.is_registerable
+            : true;
+          return (
+            matchesMajor &&
+            matchesCourseNumber &&
+            matchesGeneral &&
+            matchesRegistrable
+          );
+        })
+      : [];
   }, [
     courses,
     selectedMajor,
@@ -92,6 +99,11 @@ function CourseList() {
 
   if (loading) return <div>Loading courses...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!Array.isArray(courses))
+    return (
+      <div>Invalid course data received. Please try refreshing the page.</div>
+    );
+  if (courses.length === 0) return <div>No courses available.</div>;
 
   return (
     <div className='course-list h-full flex flex-col'>
