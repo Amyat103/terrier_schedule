@@ -54,8 +54,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MIDDLEWARE = [
-    "django.middleware.gzip.GZipMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "config.referer_middleware.RefererCheckMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -182,7 +183,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://terrier-schedule.dev",
     "https://www.terrier-schedule.dev",
     "https://terrier-schedule.up.railway.app",
-    "http://localhost:5173",
+    "web-production-08125.up.railway.app",
+    "https://web-production-08125.up.railway.app/",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
