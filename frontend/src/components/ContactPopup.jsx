@@ -41,13 +41,14 @@ function ContactPopup({ isOpen, onClose }) {
       console.error('Error sending message:', error);
       if (error.response) {
         console.error('Error response:', error.response.data);
-        console.error('Error status:', error.response.status);
+        alert(`Failed to send message: ${error.response.data.message}`);
       } else if (error.request) {
         console.error('Error request:', error.request);
+        alert('No response received from the server. Please try again.');
       } else {
         console.error('Error message:', error.message);
+        alert('An error occurred. Please try again later.');
       }
-      alert('An error occurred. Please try again later.');
     }
   };
 

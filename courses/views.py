@@ -110,9 +110,8 @@ def send_contact_email(request):
         )
 
         logger.info("Email sent successfully")
-        return JsonResponse({"status": "success"})
+        return JsonResponse({"status": "success"}, status=200)
     except Exception as e:
-        logger.error(f"Error sending email: {str(e)}")
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
 

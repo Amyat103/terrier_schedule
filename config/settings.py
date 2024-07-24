@@ -179,11 +179,33 @@ LOGGING = {
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "https://terrier-schedule.up.railway.app/",
-    "terrier-schedule.up.railway.app",
+    "https://terrier-schedule.dev",
+    "https://www.terrier-schedule.dev",
+    "https://terrier-schedule.up.railway.app",
     "http://localhost:5173",
-    "terrier-schedule.dev",
-    "www.terrier-schedule.dev",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 CACHES = {
