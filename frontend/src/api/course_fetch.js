@@ -7,9 +7,15 @@ const API_URL =
 
 let memoryStorage = {};
 
+const API_SECRET_KEY = import.meta.env.VITE_API_SECRET_KEY;
+
 const getDataVersion = async () => {
   try {
-    const response = await axios.get(`${API_URL}/data-version/`);
+    const response = await axios.get(`${API_URL}/data-version/`, {
+      headers: {
+        Authorization: `Bearer ${API_SECRET_KEY}`,
+      },
+    });
     console.log('Data version response:', response.data);
     return response.data.version;
   } catch (error) {
@@ -75,7 +81,11 @@ export const fetchCourses = async () => {
 
     if (cachedVersion !== serverVersion) {
       console.log('Fetching fresh course data from server');
-      const response = await axios.get(`${API_URL}/courses/`);
+      const response = await axios.get(`${API_URL}/courses/`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET_KEY}`,
+        },
+      });
       console.log('Courses API Response:', response);
       const success = storeData('coursesData', response.data);
       if (success) {
@@ -114,7 +124,11 @@ export const fetchSections = async () => {
 
     if (cachedVersion !== serverVersion) {
       console.log('Fetching fresh section data from server');
-      const response = await axios.get(`${API_URL}/sections/`);
+      const response = await axios.get(`${API_URL}/sections/`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET_KEY}`,
+        },
+      });
       console.log('Sections API Response:', response);
       if (!Array.isArray(response.data)) {
         console.error('Unexpected data format for sections:', response.data);

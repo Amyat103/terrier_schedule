@@ -15,6 +15,7 @@ from pathlib import Path
 
 import dj_database_url
 import environ
+from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -55,6 +56,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "config.auth_middleware.APIAuthMiddleware",
     "config.referer_middleware.RefererCheckMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -178,6 +180,7 @@ LOGGING = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://terrier-schedule.dev",
@@ -232,3 +235,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "zhoudavid7312@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+API_SECRET_KEY = os.environ.get("API_SECRET_KEY")
