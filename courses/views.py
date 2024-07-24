@@ -98,25 +98,14 @@ def send_contact_email(request):
         from_email = data.get("email")
         message = data.get("message")
 
-        content = f"From: {from_email}\n\nMessage: {message}"
-
-        response = requests.post(
-            f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
-            auth=("api", settings.MAILGUN_API_KEY),
-            data={
-                "from": f"Contact Form <mailgun@{settings.MAILGUN_DOMAIN}>",
-                "to": ["amyat@bu.edu"],
-                "subject": "New contact form submission",
-                "text": content,
-            },
+        send_mail(
+            subject="New contact form submission",
+            message=f"From: {from_email}\n\nMessage: {message}",
+            from_email=from_email,
+            recipient_list=["amyat@bu.edu"],
+            fail_silently=False,
         )
 
-        if response.status_code == 200:
-            return JsonResponse({"status": "success"})
-        else:
-            return JsonResponse(
-                {"status": "error", "message": "Failed to send email"}, status=500
-            )
-
+        return JsonResponse({"status": "success"})
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)

@@ -17,19 +17,16 @@ function ContactPopup({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('Sending message:', { email, message });
       const response = await axios.post('/api/send-contact-email/', {
         email,
         message,
       });
-      console.log('Response:', response);
       if (response.data.status === 'success') {
         alert('Message sent successfully!');
         setEmail('');
         setMessage('');
         onClose();
       } else {
-        console.error('Error response:', response.data);
         alert('Failed to send message. Please try again.');
       }
     } catch (error) {

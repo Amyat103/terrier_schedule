@@ -199,10 +199,8 @@ print("Caching backend:", CACHES["default"]["BACKEND"])
 print("Caching location:", CACHES["default"]["LOCATION"])
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.office365.com"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "amyat@bu.edu"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "zhoudavid7312@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
-MAILGUN_DOMAIN = "mailgun@sandboxd682444ebc7540d0b14c48275594731b.mailgun.org"
