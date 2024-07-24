@@ -31,6 +31,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
+API_SECRET_KEY = os.environ.get("API_SECRET_KEY")
 
 DEBUG = env("DEBUG")
 
@@ -55,6 +56,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "config.auth_middleware.APIAuthMiddleware",
     "config.referer_middleware.RefererCheckMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
