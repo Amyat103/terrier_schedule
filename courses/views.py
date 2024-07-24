@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -98,6 +99,8 @@ def send_contact_email(request):
         from_email = data.get("email")
         message = data.get("message")
 
+        logger.info(f"Attempting to send email from {from_email}")
+
         send_mail(
             subject="New contact form submission",
             message=f"From: {from_email}\n\nMessage: {message}",
@@ -106,6 +109,26 @@ def send_contact_email(request):
             fail_silently=False,
         )
 
+        logger.info("Email sent successfully")
         return JsonResponse({"status": "success"})
     except Exception as e:
+        logger.error(f"Error sending email: {str(e)}")
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+
+from django.core.mail import send_mail
+from django.http import HttpResponse
+
+
+def test_email(request):
+    try:
+        send_mail(
+            "Test Email",
+            "This is a test email from your Django application.",
+            os.getenv("EMAIL_HOST_USER"),
+            ["amyat@bu.edu"],
+            fail_silently=False,
+        )
+        return HttpResponse("Test email sent successfully!")
+    except Exception as e:
+        return HttpResponse(f"Failed to send test email. Error: {str(e)}")

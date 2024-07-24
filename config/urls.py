@@ -27,6 +27,7 @@ from courses.views import (
     debug_view,
     get_data_version,
     send_contact_email,
+    test_email,
 )
 
 router = DefaultRouter()
@@ -46,4 +47,5 @@ urlpatterns = [
     path("", catch_all),
     path("api/data-version/", get_data_version, name="data_version"),
     path("api/send-contact-email/", send_contact_email, name="send_contact_email"),
+    path("test-email/", test_email, name="test_email"),
 ]
