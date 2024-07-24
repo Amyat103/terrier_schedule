@@ -5,13 +5,12 @@ const API_URL =
   import.meta.env.VITE_API_URL ||
   'https://web-production-08125.up.railway.app/api';
 
-// const CHUNK_SIZE = 1000000;
 let memoryStorage = {};
 
 const getDataVersion = async () => {
   try {
     const response = await axios.get(`${API_URL}/data-version/`);
-    console.log('Sections API response:', response.data);
+    console.log('Data version response:', response.data);
     return response.data.version;
   } catch (error) {
     console.error('Error fetching data version:', error);
@@ -40,49 +39,53 @@ const safeGetItem = (key) => {
   }
 };
 
-// const storeData = (key, data) => {
-//   const jsonString = JSON.stringify(data);
-//   const chunks = [];
-//   for (let i = 0; i < jsonString.length; i += CHUNK_SIZE) {
-//     chunks.push(jsonString.slice(i, i + CHUNK_SIZE));
-//   }
-//   chunks.forEach((chunk, index) => {
-//     safeSetItem(`${key}_${index}`, chunk);
-//   });
-//   safeSetItem(`${key}_chunks`, chunks.length.toString());
-// };
 const storeData = (key, data) => {
   try {
     const jsonString = JSON.stringify(data);
     const compressed = LZString.compress(jsonString);
-    localStorage.setItem(key, compressed);
-    return true;
+    return safeSetItem(key, compressed);
   } catch (e) {
-    console.warn(`Failed to store ${key} in localStorage: ${e.message}`);
+    console.warn(`Failed to store ${key}: ${e.message}`);
     return false;
   }
 };
 
 const retrieveData = (key) => {
   try {
-    const compressed = localStorage.getItem(key);
+    const compressed = safeGetItem(key);
     if (!compressed) return null;
     const jsonString = LZString.decompress(compressed);
     return JSON.parse(jsonString);
   } catch (e) {
-    console.error(
-      `Failed to retrieve or parse ${key} from localStorage: ${e.message}`
-    );
+    console.error(`Failed to retrieve or parse ${key}: ${e.message}`);
     return null;
   }
 };
 
 export const fetchCourses = async () => {
   try {
-    console.log('Fetching courses from:', `${API_URL}/courses/`);
-    const response = await axios.get(`${API_URL}/courses/`);
-    console.log('Courses API Response:', response);
-    return response.data;
+    const cachedVersion = safeGetItem('coursesVersion');
+    const serverVersion = await getDataVersion();
+    console.log(
+      'Courses - Cached version:',
+      cachedVersion,
+      'Server version:',
+      serverVersion
+    );
+
+    if (cachedVersion !== serverVersion) {
+      console.log('Fetching fresh course data from server');
+      const response = await axios.get(`${API_URL}/courses/`);
+      console.log('Courses API Response:', response);
+      const success = storeData('coursesData', response.data);
+      if (success) {
+        safeSetItem('coursesVersion', serverVersion);
+      }
+      return response.data;
+    } else {
+      console.log('Using cached course data');
+      return retrieveData('coursesData');
+    }
   } catch (error) {
     console.error('Error fetching courses:', error);
     if (error.response) {
@@ -94,37 +97,55 @@ export const fetchCourses = async () => {
     } else {
       console.error('Error message:', error.message);
     }
-    throw error;
+    return [];
   }
 };
 
 export const fetchSections = async () => {
   try {
-    console.log('Fetching sections from:', `${API_URL}/sections/`);
-    const response = await axios.get(`${API_URL}/sections/`);
-    console.log('Sections API Response:', response);
-    if (!Array.isArray(response.data)) {
-      console.error('Unexpected data format for sections:', response.data);
-      return {};
-    }
-    console.log('Raw sections data:', response.data.slice(0, 3));
-    const sectionsByCourse = response.data.reduce((acc, section) => {
-      if (!acc[section.course_id]) {
-        acc[section.course_id] = [];
-      }
-      acc[section.course_id].push(section);
-      return acc;
-    }, {});
+    const cachedVersion = safeGetItem('sectionsVersion');
+    const serverVersion = await getDataVersion();
     console.log(
-      'Organized sections (first 3 courses):',
-      Object.keys(sectionsByCourse)
-        .slice(0, 3)
-        .reduce((acc, key) => {
-          acc[key] = sectionsByCourse[key];
-          return acc;
-        }, {})
+      'Sections - Cached version:',
+      cachedVersion,
+      'Server version:',
+      serverVersion
     );
-    return sectionsByCourse;
+
+    if (cachedVersion !== serverVersion) {
+      console.log('Fetching fresh section data from server');
+      const response = await axios.get(`${API_URL}/sections/`);
+      console.log('Sections API Response:', response);
+      if (!Array.isArray(response.data)) {
+        console.error('Unexpected data format for sections:', response.data);
+        return {};
+      }
+      console.log('Raw sections data:', response.data.slice(0, 3));
+      const sectionsByCourse = response.data.reduce((acc, section) => {
+        if (!acc[section.course_id]) {
+          acc[section.course_id] = [];
+        }
+        acc[section.course_id].push(section);
+        return acc;
+      }, {});
+      const success = storeData('sectionsData', sectionsByCourse);
+      if (success) {
+        safeSetItem('sectionsVersion', serverVersion);
+      }
+      console.log(
+        'Organized sections (first 3 courses):',
+        Object.keys(sectionsByCourse)
+          .slice(0, 3)
+          .reduce((acc, key) => {
+            acc[key] = sectionsByCourse[key];
+            return acc;
+          }, {})
+      );
+      return sectionsByCourse;
+    } else {
+      console.log('Using cached section data');
+      return retrieveData('sectionsData');
+    }
   } catch (error) {
     console.error('Error fetching sections:', error);
     if (error.response) {
