@@ -4,7 +4,7 @@ import os
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -99,24 +99,30 @@ def send_contact_email(request):
         from_email = data.get("email")
         message = data.get("message")
 
+        # track where message coming from
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(",")[0]
+        else:
+            ip = request.META.get("REMOTE_ADDR")
+
         logger.info(f"Attempting to send email from {from_email}")
+        logger.info(f"Email sent from {from_email} (IP: {ip})")
+
+        full_message = f"From: {from_email}\nIP Address: {ip}\n\nMessage: {message}"
 
         send_mail(
             subject="New contact form submission",
-            message=f"From: {from_email}\n\nMessage: {message}",
+            message=full_message,
             from_email=from_email,
             recipient_list=["amyat@bu.edu"],
             fail_silently=False,
         )
 
-        logger.info("Email sent successfully")
-        return JsonResponse({"status": "success"}, status=200)
+        return JsonResponse({"status": "success"})
     except Exception as e:
+        logger.error(f"Error sending email from {from_email} (IP: {ip}): {str(e)}")
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-
-from django.core.mail import send_mail
-from django.http import HttpResponse
 
 
 def test_email(request):
