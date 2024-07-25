@@ -54,7 +54,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-ALLOWED_IPS = ["203.155.66.195"]
+ALLOWED_IPS = os.getenv("ALLOWED_IPS", "").split(",")
+if not ALLOWED_IPS:
+    ALLOWED_IPS = ["203.155.66.195"]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -62,7 +64,7 @@ MIDDLEWARE = [
     "config.referer_middleware.RefererCheckMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "config.ip_middleware.IPWhitelistMiddleware",
+    "courses.ip_middleware.IPWhitelistMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
