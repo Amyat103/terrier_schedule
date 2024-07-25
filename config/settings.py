@@ -61,7 +61,7 @@ if not ALLOWED_IPS:
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "config.auth_middleware.APIAuthMiddleware",
-    "config.referer_middleware.RefererCheckMiddleware",
+    # "config.referer_middleware.RefererCheckMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
     # "courses.ip_middleware.IPWhitelistMiddleware",
@@ -184,7 +184,7 @@ LOGGING = {
     },
 }
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://terrier-schedule.dev",
