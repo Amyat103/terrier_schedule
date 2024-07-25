@@ -18,6 +18,11 @@ ALLOWED_HOSTS = [
 ]
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class APIAuthMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -27,16 +32,27 @@ class APIAuthMiddleware:
             origin = request.headers.get("Origin", "")
             referer = request.headers.get("Referer", "")
 
+            logger.info(
+                f"API request received. Path: {request.path}, Origin: {origin}, Referer: {referer}"
+            )
+
             is_allowed_origin = any(
                 host in origin or host in referer for host in ALLOWED_HOSTS
             )
 
             if is_allowed_origin:
+                logger.info("Request allowed due to origin/referer")
                 return self.get_response(request)
 
             auth_token = request.headers.get("Authorization")
-            if not auth_token or auth_token != f"Bearer {settings.API_SECRET_KEY}":
-                return JsonResponse({"error": "Unauthorized"}, status=401)
+            if auth_token and auth_token == f"Bearer {settings.API_SECRET_KEY}":
+                logger.info("Request allowed due to valid API key")
+                return self.get_response(request)
+
+            logger.warning(
+                "Request forbidden: Invalid origin/referer and no valid API key"
+            )
+            return JsonResponse({"error": "Unauthorized"}, status=401)
 
         return self.get_response(request)
 

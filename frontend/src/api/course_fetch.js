@@ -14,6 +14,7 @@ const getHeaders = () => {
   if (API_SECRET_KEY) {
     headers['Authorization'] = `Bearer ${API_SECRET_KEY}`;
   }
+  console.log('Request headers:', headers);
   return headers;
 };
 
