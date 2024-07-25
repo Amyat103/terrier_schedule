@@ -31,6 +31,7 @@ class APIAuthMiddleware:
         if request.path.startswith("/api/"):
             origin = request.headers.get("Origin", "")
             referer = request.headers.get("Referer", "")
+            auth_token = request.headers.get("Authorization")
 
             logger.info(
                 f"API request received. Path: {request.path}, Origin: {origin}, Referer: {referer}"
@@ -42,16 +43,17 @@ class APIAuthMiddleware:
             )
 
             if is_allowed_origin:
-                logger.info("Request allowed due to origin/referer")
+                logger.info(
+                    f"Request allowed due to origin/referer: {origin or referer}"
+                )
                 return self.get_response(request)
 
-            auth_token = request.headers.get("Authorization")
             if auth_token and auth_token == f"Bearer {settings.API_SECRET_KEY}":
                 logger.info("Request allowed due to valid API key")
                 return self.get_response(request)
 
             logger.warning(
-                "Request forbidden: Invalid origin/referer and no valid API key"
+                f"Request forbidden: Invalid origin/referer ({origin or referer}) and no valid API key"
             )
             return JsonResponse({"error": "Unauthorized"}, status=401)
 

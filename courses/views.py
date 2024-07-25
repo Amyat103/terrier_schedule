@@ -146,7 +146,6 @@ def test_email(request):
 
 
 @require_POST
-@api_key_required
 def trigger_fetch_external_data(request):
     try:
         call_command("fetch_external_data")
