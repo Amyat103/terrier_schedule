@@ -29,6 +29,7 @@ from courses.views import (
     get_data_version,
     send_contact_email,
     test_email,
+    trigger_fetch_external_data,
 )
 
 router = DefaultRouter()
@@ -49,5 +50,5 @@ urlpatterns = [
     path("api/data-version/", get_data_version, name="data_version"),
     path("api/send-contact-email/", send_contact_email, name="send_contact_email"),
     path("test-email/", test_email, name="test_email"),
-    path("api/trigger-fetch/", views.trigger_fetch_external_data, name="trigger_fetch"),
+    path("api/trigger-fetch/", trigger_fetch_external_data, name="trigger_fetch"),
 ]
