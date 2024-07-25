@@ -240,3 +240,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "zhoudavid7312@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SKIP_TEMPLATE_PREFIXES": ("django/forms/widgets/", "admin/widgets/", "api/"),
+}

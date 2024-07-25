@@ -9,7 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -145,10 +145,16 @@ def test_email(request):
         return HttpResponse(f"Failed to send test email. Error: {str(e)}")
 
 
-@require_POST
+@require_http_methods(["GET", "POST"])
 def trigger_fetch_external_data(request):
+    logger.info(f"Received request for trigger_fetch_external_data")
+    logger.info(f"Request method: {request.method}")
+    logger.info(f"Content-Type: {request.content_type}")
+    logger.info(f"Headers: {request.headers}")
+
     try:
         call_command("fetch_external_data")
         return JsonResponse({"status": "success", "message": "Data fetch completed"})
     except Exception as e:
+        logger.error(f"Error in trigger_fetch_external_data: {str(e)}")
         return JsonResponse({"status": "error", "message": str(e)}, status=500)

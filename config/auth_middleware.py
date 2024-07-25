@@ -29,9 +29,11 @@ class APIAuthMiddleware:
 
     def __call__(self, request):
         if request.path.startswith("/api/"):
-            origin = request.headers.get("Origin", "")
-            referer = request.headers.get("Referer", "")
-            auth_token = request.headers.get("Authorization")
+            logger.info(f"Request method: {request.method}")
+            logger.info(f"APIAuthMiddleware: Request method: {request.method}")
+            logger.info(f"APIAuthMiddleware: Path: {request.path}")
+            logger.info(f"APIAuthMiddleware: Content-Type: {request.content_type}")
+            logger.info(f"APIAuthMiddleware: Headers: {request.headers}")
 
             logger.info(
                 f"API request received. Path: {request.path}, Origin: {origin}, Referer: {referer}"
