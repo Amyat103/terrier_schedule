@@ -31,10 +31,12 @@ class APIAuthMiddleware:
                 host in origin or host in referer for host in ALLOWED_HOSTS
             )
 
-            if not is_allowed_origin:
-                auth_token = request.headers.get("Authorization")
-                if not auth_token or auth_token != f"Bearer {settings.API_SECRET_KEY}":
-                    return JsonResponse({"error": "Unauthorized"}, status=401)
+            if is_allowed_origin:
+                return self.get_response(request)
+
+            auth_token = request.headers.get("Authorization")
+            if not auth_token or auth_token != f"Bearer {settings.API_SECRET_KEY}":
+                return JsonResponse({"error": "Unauthorized"}, status=401)
 
         return self.get_response(request)
 
