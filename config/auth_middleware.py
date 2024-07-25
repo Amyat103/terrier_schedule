@@ -29,15 +29,16 @@ class APIAuthMiddleware:
 
     def __call__(self, request):
         if request.path.startswith("/api/"):
-            logger.info(f"Request method: {request.method}")
+            origin = request.headers.get("Origin", "")
+            referer = request.headers.get("Referer", "")
+            auth_token = request.headers.get("Authorization")
+
             logger.info(f"APIAuthMiddleware: Request method: {request.method}")
             logger.info(f"APIAuthMiddleware: Path: {request.path}")
             logger.info(f"APIAuthMiddleware: Content-Type: {request.content_type}")
-            logger.info(f"APIAuthMiddleware: Headers: {request.headers}")
-
-            logger.info(
-                f"API request received. Path: {request.path}, Origin: {origin}, Referer: {referer}"
-            )
+            logger.info(f"APIAuthMiddleware: Origin: {origin}")
+            logger.info(f"APIAuthMiddleware: Referer: {referer}")
+            logger.info(f"APIAuthMiddleware: Auth Token: {auth_token}")
 
             is_allowed_origin = any(
                 host in origin or host in referer
@@ -50,9 +51,11 @@ class APIAuthMiddleware:
                 )
                 return self.get_response(request)
 
-            if auth_token and auth_token == f"Bearer {settings.API_SECRET_KEY}":
-                logger.info("Request allowed due to valid API key")
-                return self.get_response(request)
+            if auth_token and auth_token.startswith("Bearer "):
+                api_key = auth_token.split(" ")[1]
+                if api_key == settings.API_SECRET_KEY:
+                    logger.info("Request allowed due to valid API key")
+                    return self.get_response(request)
 
             logger.warning(
                 f"Request forbidden: Invalid origin/referer ({origin or referer}) and no valid API key"

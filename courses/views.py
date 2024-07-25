@@ -145,13 +145,11 @@ def test_email(request):
         return HttpResponse(f"Failed to send test email. Error: {str(e)}")
 
 
+@csrf_exempt
 @require_http_methods(["GET", "POST"])
 def trigger_fetch_external_data(request):
-    logger.info(f"Received request for trigger_fetch_external_data")
-    logger.info(f"Request method: {request.method}")
-    logger.info(f"Content-Type: {request.content_type}")
-    logger.info(f"Headers: {request.headers}")
-
+    logger.info(f"Received {request.method} request for trigger_fetch_external_data")
+    logger.info(f"Request headers: {request.headers}")
     try:
         call_command("fetch_external_data")
         return JsonResponse({"status": "success", "message": "Data fetch completed"})
