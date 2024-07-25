@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from courses.models import Course, Section, StoredCourse, StoredSection
 
+from . import update_cache
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,6 +26,14 @@ class Command(BaseCommand):
 
         stored_courses, id_to_uuid = self.update_courses(courses)
         self.update_sections(sections, stored_courses, id_to_uuid)
+
+        self.stdout.write("Updating cache...")
+        update_cache()
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Finished data fetching (from scraper) and updated cache successfully"
+            )
+        )
 
     def fetch_external_data(self):
         with connections["online"].cursor() as cursor:

@@ -4,6 +4,7 @@ import os
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.core.management import call_command
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -13,6 +14,8 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+
+from config.auth_middleware import api_key_required
 
 from .course_storage import CourseStorage
 from .models import Course, Section
@@ -137,3 +140,13 @@ def test_email(request):
         return HttpResponse("Test email sent successfully!")
     except Exception as e:
         return HttpResponse(f"Failed to send test email. Error: {str(e)}")
+
+
+@require_POST
+@api_key_required
+def trigger_fetch_external_data(request):
+    try:
+        call_command("fetch_external_data")
+        return JsonResponse({"status": "success", "message": "Data fetch completed"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)

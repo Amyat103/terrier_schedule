@@ -20,6 +20,7 @@ from django.http import HttpResponse
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from courses import views
 from courses.views import (
     CourseViewSet,
     SectionViewSet,
@@ -48,4 +49,5 @@ urlpatterns = [
     path("api/data-version/", get_data_version, name="data_version"),
     path("api/send-contact-email/", send_contact_email, name="send_contact_email"),
     path("test-email/", test_email, name="test_email"),
+    path("api/trigger-fetch/", views.trigger_fetch_external_data, name="trigger_fetch"),
 ]

@@ -1,5 +1,8 @@
 # config/auth_middleware.py
 
+import os
+from functools import wraps
+
 from django.conf import settings
 from django.http import JsonResponse
 
@@ -34,3 +37,14 @@ class APIAuthMiddleware:
                     return JsonResponse({"error": "Unauthorized"}, status=401)
 
         return self.get_response(request)
+
+
+def api_key_required(view_func):
+    @wraps(view_func)
+    def wrapped_view(request, *args, **kwargs):
+        api_key = request.META.get("HTTP_X_API_KEY")
+        if api_key == os.environ.get("API_SECRET_KEY"):
+            return view_func(request, *args, **kwargs)
+        return JsonResponse({"error": "Invalid API key"}, status=403)
+
+    return wrapped_view
