@@ -70,6 +70,7 @@ from .cache_utils import (
 
 @api_view(["GET"])
 def course_list(request):
+    logger.info("course_list view called")
     major_prefix = request.query_params.get("major_prefix")
     if major_prefix:
         courses = get_courses_by_major_prefix(major_prefix)
@@ -80,6 +81,7 @@ def course_list(request):
 
 @api_view(["GET"])
 def section_list(request):
+    logger.info("section_list view called")
     course_id = request.query_params.get("course_id")
     if course_id:
         sections = get_sections_by_course_id(course_id)
@@ -90,6 +92,7 @@ def section_list(request):
 
 @require_GET
 def get_data_version(request):
+    logger.info("get_data_version view called")
     version = timezone.now().strftime("%Y%m%d")
     return JsonResponse({"version": version})
 

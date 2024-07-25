@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "config.referer_middleware.RefererCheckMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "courses.ip_middleware.IPWhitelistMiddleware",
+    # "courses.ip_middleware.IPWhitelistMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
