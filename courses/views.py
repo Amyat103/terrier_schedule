@@ -17,6 +17,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from config.auth_middleware import api_key_required
 
+from .cache_utils import update_cache_after_fetch
 from .course_storage import CourseStorage
 from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
@@ -150,9 +151,14 @@ def test_email(request):
 def trigger_fetch_external_data(request):
     logger.info(f"Received {request.method} request for trigger_fetch_external_data")
     logger.info(f"Request headers: {request.headers}")
+    logger.info(f"trigger_fetch_external_data: Received {request.method} request")
+    logger.info(f"trigger_fetch_external_data: Headers: {request.headers}")
     try:
         call_command("fetch_external_data")
-        return JsonResponse({"status": "success", "message": "Data fetch completed"})
+        update_cache_after_fetch()
+        return JsonResponse(
+            {"status": "success", "message": "Data fetch and cache update completed"}
+        )
     except Exception as e:
         logger.error(f"Error in trigger_fetch_external_data: {str(e)}")
         return JsonResponse({"status": "error", "message": str(e)}, status=500)

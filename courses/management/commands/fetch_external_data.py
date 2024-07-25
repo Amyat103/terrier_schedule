@@ -1,4 +1,3 @@
-# fetch_external_data.py
 import logging
 import uuid
 
@@ -7,9 +6,8 @@ from django.db import connection, connections, transaction
 from rest_framework import serializers
 from tqdm import tqdm
 
+from courses.cache_utils import update_cache_after_fetch
 from courses.models import Course, Section, StoredCourse, StoredSection
-
-from . import update_cache
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +26,7 @@ class Command(BaseCommand):
         self.update_sections(sections, stored_courses, id_to_uuid)
 
         self.stdout.write("Updating cache...")
-        update_cache()
+        update_cache_after_fetch()
         self.stdout.write(
             self.style.SUCCESS(
                 "Finished data fetching (from scraper) and updated cache successfully"
