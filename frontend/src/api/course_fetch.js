@@ -7,7 +7,7 @@ const API_URL =
 
 let memoryStorage = {};
 
-const API_SECRET_KEY = import.meta.env.VITE_API_SECRET_KEY || '';
+const API_SECRET_KEY = import.meta.env.API_SECRET_KEY || '';
 
 const getHeaders = () => {
   const headers = {};

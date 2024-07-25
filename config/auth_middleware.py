@@ -28,16 +28,18 @@ class APIAuthMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        logger.info(f"Received request for path: {request.path}")
+        logger.info(f"Request headers: {request.headers}")
+
         if request.path.startswith("/api/"):
             origin = request.headers.get("Origin", "")
             referer = request.headers.get("Referer", "")
 
-            logger.info(
-                f"API request received. Path: {request.path}, Origin: {origin}, Referer: {referer}"
-            )
+            logger.info(f"API request received. Origin: {origin}, Referer: {referer}")
 
             is_allowed_origin = any(
-                host in origin or host in referer for host in ALLOWED_HOSTS
+                host in origin or host in referer
+                for host in settings.CORS_ALLOWED_ORIGINS
             )
 
             if is_allowed_origin:
