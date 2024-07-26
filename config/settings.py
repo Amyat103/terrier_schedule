@@ -245,3 +245,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEBUG_TOOLBAR_CONFIG = {
     "SKIP_TEMPLATE_PREFIXES": ("django/forms/widgets/", "admin/widgets/", "api/"),
 }
+
+ADMIN_ENABLED = False
+
+if ADMIN_ENABLED:
+    INSTALLED_APPS += ["django.contrib.admin"]
