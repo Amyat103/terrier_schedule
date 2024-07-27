@@ -33,7 +33,63 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = os.environ.get("SECRET_KEY")
 API_SECRET_KEY = os.environ.get("API_SECRET_KEY")
 
-DEBUG = env("DEBUG")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+if DEBUG:
+    import secrets
+
+    SECRET_KEY = secrets.token_urlsafe(50)
+    API_SECRET_KEY = secrets.token_urlsafe(50)
+else:
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    API_SECRET_KEY = os.environ.get("API_SECRET_KEY")
+
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "local_terrier_schedule",
+            "USER": "postgres",
+            "PASSWORD": os.environ.get("LOCAL_PASS"),
+            "HOST": "localhost",
+            "PORT": "5432",
+        },
+        "online": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("PGDATABASE"),
+            "USER": os.getenv("PGUSER"),
+            "PASSWORD": os.getenv("PGPASSWORD"),
+            "HOST": os.getenv("PGHOST"),
+            "PORT": os.getenv("PGPORT"),
+        },
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600,
+        )
+    }
+
+if DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+            "LOCATION": os.getenv("MEMCACHED_URL", "roundhouse.proxy.rlwy.net:57907"),
+            "OPTIONS": {
+                "no_delay": True,
+                "ignore_exc": True,
+                "max_pool_size": 4,
+                "use_pooling": True,
+            },
+        }
+    }
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".railway.app"])
 
@@ -103,20 +159,20 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=env("DATABASE_URL"),
-        conn_max_age=600,
-    ),
-    "online": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("PGDATABASE"),
-        "USER": os.getenv("PGUSER"),
-        "PASSWORD": os.getenv("PGPASSWORD"),
-        "HOST": os.getenv("PGHOST"),
-        "PORT": os.getenv("PGPORT"),
-    },
-}
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default=env("DATABASE_URL"),
+#         conn_max_age=600,
+#     ),
+#     "online": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.getenv("PGDATABASE"),
+#         "USER": os.getenv("PGUSER"),
+#         "PASSWORD": os.getenv("PGPASSWORD"),
+#         "HOST": os.getenv("PGHOST"),
+#         "PORT": os.getenv("PGPORT"),
+#     },
+# }
 
 
 # Password validation
@@ -187,20 +243,23 @@ LOGGING = {
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
+    # REVERT IF DEPLOYMENT BLOCKING ACCESS
+    # "https://web-production-08125.up.railway.app/api",
+    # "https://terrier-schedule.dev",
+    # "https://www.terrier-schedule.dev",
+    # "https://terrier-schedule.up.railway.app",
+    # "https://web-production-08125.up.railway.app",
     "https://terrier-schedule.dev",
     "https://www.terrier-schedule.dev",
     "https://terrier-schedule.up.railway.app",
-    "web-production-08125.up.railway.app",
-    "https://web-production-08125.up.railway.app/",
-    "terrier-schedule.dev",
-    "www.terrier-schedule.dev",
-    "terrier-schedule.up.railway.app",
-    "https://terrier-schedule.dev/",
-    "https://web-production-08125.up.railway.app/",
-    "https://web-production-08125.up.railway.app/api/",
-    "https://www.terrier-schedule.dev/",
-    "https://terrier-schedule.up.railway.app/",
+    "https://web-production-08125.up.railway.app",
 ]
+
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -217,6 +276,13 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
+
+if DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }
 
 CACHES = {
     "default": {

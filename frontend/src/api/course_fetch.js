@@ -1,9 +1,10 @@
 import axios from 'axios';
 import LZString from 'lz-string';
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  'https://web-production-08125.up.railway.app/api';
+const API_URL = import.meta.env.DEV
+  ? 'http://localhost:8000/api'
+  : import.meta.env.VITE_API_URL ||
+    'https://web-production-08125.up.railway.app/api';
 
 let memoryStorage = {};
 
