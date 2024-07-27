@@ -87,8 +87,12 @@ export const fetchCourses = async () => {
       serverVersion
     );
 
-    if (cachedVersion !== serverVersion) {
-      console.log('Fetching fresh course data from server');
+    const cachedData = retrieveData('coursesData');
+    if (
+      cachedVersion !== serverVersion ||
+      !cachedData ||
+      cachedData.length === 0
+    ) {
       console.log('Fetching fresh course data from server');
       const response = await axios.get(`${API_URL}/courses/`, {
         headers: getHeaders(),
@@ -101,7 +105,7 @@ export const fetchCourses = async () => {
       return response.data;
     } else {
       console.log('Using cached course data');
-      return retrieveData('coursesData');
+      return cachedData;
     }
   } catch (error) {
     console.error('Error fetching courses:', error);
@@ -129,7 +133,12 @@ export const fetchSections = async () => {
       serverVersion
     );
 
-    if (cachedVersion !== serverVersion) {
+    const cachedData = retrieveData('sectionsData');
+    if (
+      cachedVersion !== serverVersion ||
+      !cachedData ||
+      Object.keys(cachedData).length === 0
+    ) {
       console.log('Fetching fresh section data from server');
       const response = await axios.get(`${API_URL}/sections/`, {
         headers: getHeaders(),
@@ -163,7 +172,7 @@ export const fetchSections = async () => {
       return sectionsByCourse;
     } else {
       console.log('Using cached section data');
-      return retrieveData('sectionsData');
+      return cachedData;
     }
   } catch (error) {
     console.error('Error fetching sections:', error);

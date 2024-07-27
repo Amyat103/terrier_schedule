@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import PropTypes from 'prop-types';
 

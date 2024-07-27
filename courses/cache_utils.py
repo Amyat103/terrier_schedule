@@ -15,11 +15,18 @@ SECTIONS_CACHE_KEY = "all_sections_data"
 BATCH_SIZE = 500
 
 
+def update_data_version():
+    new_version = timezone.now().strftime("%Y%m%d%H%M%S")
+    cache.set("data_version", new_version, timeout=CACHE_DURATION.total_seconds())
+    logger.info(f"Updated data version to {new_version}")
+
+
 def update_cache_after_fetch():
     logger.info("Starting cache update")
     try:
         update_courses_cache()
         update_sections_cache()
+        update_data_version()
         logger.info("Cache update complete")
     except Exception as e:
         logger.error(f"Error during cache update: {str(e)}")
