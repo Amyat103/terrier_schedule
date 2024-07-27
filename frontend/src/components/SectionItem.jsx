@@ -1,9 +1,18 @@
+import React from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import PropTypes from 'prop-types';
 
 function SectionItem({ section }) {
   const { addCourse, removeCourse, selectedCourses } = useSchedule();
   const isSelected = selectedCourses.some((s) => s.id === section.id);
+  const availabilityPercentage =
+    (section.enrollment_available / section.class_capacity) * 100;
+
+  const getAvailabilityColor = () => {
+    if (availabilityPercentage >= 70) return 'text-red-700';
+    if (availabilityPercentage <= 30) return 'text-red-700';
+    return 'text-orange-500';
+  };
 
   const handleToggle = () => {
     if (isSelected) {
@@ -16,9 +25,7 @@ function SectionItem({ section }) {
 
   return (
     <div className='section-item p-2 border rounded flex flex-col h-full hover:bg-gray-100 transition-colors duration-200'>
-      {' '}
       <div className='flex-grow'>
-        {' '}
         <p>
           <span className='font-semibold'>Section:</span>{' '}
           {section.class_section}
@@ -39,12 +46,18 @@ function SectionItem({ section }) {
         </p>
         <p>
           <span className='font-semibold'>Availability:</span>{' '}
-          {section.enrollment_available}/{section.class_capacity}
+          <span className={getAvailabilityColor()}>
+            {section.enrollment_available}/{section.class_capacity}
+          </span>
         </p>
       </div>
       <button
         onClick={handleToggle}
-        className='mt-2 w-full px-2 py-1 bg-red-700 text-white rounded hover:bg-red-800 transition-colors'
+        className={`mt-2 w-full px-2 py-1 text-white rounded transition-colors ${
+          isSelected
+            ? 'bg-red-700 hover:bg-red-800'
+            : 'bg-red-700 hover:bg-red-800'
+        }`}
       >
         {isSelected ? 'Remove' : 'Add'}
       </button>

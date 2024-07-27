@@ -40,7 +40,8 @@ function CourseItem({ course, isExpanded, onExpand }) {
         }`}
       >
         <div className='px-4 pb-4'>
-          <p className='text-gray-700 mb-4'>{course.description}</p>
+          <h4 className='font-bold text-sm mt-2 mb-1'>Description</h4>
+          <p className='text-gray-700 mb-4 text-sm'>{course.description}</p>
           <MemoizedSectionList courseId={course.course_id} />
         </div>
       </div>

@@ -3,7 +3,7 @@ import { useSchedule } from '../context/ScheduleContext';
 import { MemoizedCourseItem } from './CourseItem';
 import CustomDropdown from './CustomDropdown';
 import ToggleButton from './ToggleButton';
-import { faBullseye } from '@fortawesome/free-solid-svg-icons';
+// import { faBullseye } from '@fortawesome/free-solid-svg-icons';
 
 const ITEMS_PER_BATCH = 20;
 
@@ -115,14 +115,14 @@ function CourseList() {
         />
         <input
           type='text'
-          placeholder='Course Number'
+          placeholder='Course # (e.g. 114)'
           className='p-2 border rounded'
           value={courseNumber}
           onChange={(e) => setCourseNumber(e.target.value)}
         />
         <input
           type='text'
-          placeholder='Search all fields'
+          placeholder='Search Name (cs132)'
           className='flex-grow p-2 border rounded'
           value={generalSearch}
           onChange={(e) => setGeneralSearch(e.target.value)}
