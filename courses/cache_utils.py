@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.core.cache import cache
 from django.db import connection
+from django.utils import timezone
 
 from .models import Course, Section
 from .serializer import CourseSerializer, SectionSerializer
@@ -13,6 +14,15 @@ CACHE_DURATION = timedelta(days=8)
 COURSES_CACHE_KEY = "all_courses_data"
 SECTIONS_CACHE_KEY = "all_sections_data"
 BATCH_SIZE = 500
+
+
+def get_data_version():
+    version = cache.get("data_version")
+    if not version:
+        new_version = timezone.now().strftime("%Y%m%d%H%M%S")
+        cache.set("data_version", new_version, timeout=CACHE_DURATION.total_seconds())
+        version = new_version
+    return version
 
 
 def update_data_version():

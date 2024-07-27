@@ -17,6 +17,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from config.auth_middleware import api_key_required
 
+from .cache_utils import get_data_version as get_cached_version
 from .cache_utils import update_cache_after_fetch
 from .course_storage import CourseStorage
 from .models import Course, Section
@@ -94,7 +95,7 @@ def section_list(request):
 @require_GET
 def get_data_version(request):
     logger.info("get_data_version view called")
-    version = timezone.now().strftime("%Y%m%d")
+    version = get_cached_version()
     return JsonResponse({"version": version})
 
 
