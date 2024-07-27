@@ -17,7 +17,6 @@ function SectionItem({ section }) {
     if (isSelected) {
       removeCourse(section.id);
     } else {
-      console.log('Adding course (full object):', section);
       addCourse(section);
     }
   };

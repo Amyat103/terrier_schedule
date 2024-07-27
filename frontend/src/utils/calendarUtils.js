@@ -8,7 +8,6 @@ export const timeToMinutes = (timeString) => {
     hours = 0;
   }
   const result = hours * 60 + minutes;
-  console.log('Converted to minutes:', result);
   return result;
 };
 
@@ -19,7 +18,6 @@ export const minutesToGridRow = (minutes) => {
 export const dayOrder = ['Mo', 'Tu', 'We', 'Th', 'Fr'];
 
 export const groupCoursesByDay = (courses) => {
-  console.log('Grouping courses:', courses);
   const grouped = courses.reduce((acc, course) => {
     const days = course.days.match(/.{2}/g) || [];
     days.forEach((day) => {
@@ -28,7 +26,6 @@ export const groupCoursesByDay = (courses) => {
     });
     return acc;
   }, {});
-  console.log('Grouped courses:', grouped);
   return grouped;
 };
 

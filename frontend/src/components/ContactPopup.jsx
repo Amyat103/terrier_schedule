@@ -22,12 +22,10 @@ function ContactPopup({ isOpen, onClose }) {
     e.preventDefault();
     try {
       console.log('Sending message:', { email, message });
-      console.log('API URL:', API_URL);
       const response = await axios.post(`${API_URL}/send-contact-email/`, {
         email,
         message,
       });
-      console.log('Full Response:', response);
       if (response.data.status === 'success') {
         alert('Message sent successfully!');
         setEmail('');

@@ -15,7 +15,6 @@ const getHeaders = () => {
   if (API_SECRET_KEY) {
     headers['Authorization'] = `Bearer ${API_SECRET_KEY}`;
   }
-  console.log('Request headers:', headers);
   return headers;
 };
 
@@ -97,7 +96,6 @@ export const fetchCourses = async () => {
       const response = await axios.get(`${API_URL}/courses/`, {
         headers: getHeaders(),
       });
-      console.log('Courses API Response:', response);
       const success = storeData('coursesData', response.data);
       if (success) {
         safeSetItem('coursesVersion', serverVersion);
@@ -143,12 +141,10 @@ export const fetchSections = async () => {
       const response = await axios.get(`${API_URL}/sections/`, {
         headers: getHeaders(),
       });
-      console.log('Sections API Response:', response);
       if (!Array.isArray(response.data)) {
         console.error('Unexpected data format for sections:', response.data);
         return {};
       }
-      console.log('Raw sections data:', response.data.slice(0, 3));
       const sectionsByCourse = response.data.reduce((acc, section) => {
         if (!acc[section.course_id]) {
           acc[section.course_id] = [];
@@ -160,15 +156,6 @@ export const fetchSections = async () => {
       if (success) {
         safeSetItem('sectionsVersion', serverVersion);
       }
-      console.log(
-        'Organized sections (first 3 courses):',
-        Object.keys(sectionsByCourse)
-          .slice(0, 3)
-          .reduce((acc, key) => {
-            acc[key] = sectionsByCourse[key];
-            return acc;
-          }, {})
-      );
       return sectionsByCourse;
     } else {
       console.log('Using cached section data');

@@ -17,8 +17,6 @@ function CourseList() {
   const scrollContainerRef = useRef(null);
   const [showRegistrableOnly, setShowRegistrableOnly] = useState(false);
 
-  console.log('Courses data:', courses);
-
   const majors = useMemo(() => {
     return Array.isArray(courses)
       ? [...new Set(courses.map((course) => course.major))].sort()
