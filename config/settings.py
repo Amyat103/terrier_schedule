@@ -70,9 +70,17 @@ if DEBUG:
 else:
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("DATABASE_URL"),
+            default=env("DATABASE_URL"),
             conn_max_age=600,
-        )
+        ),
+        "online": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("PGDATABASE"),
+            "USER": os.getenv("PGUSER"),
+            "PASSWORD": os.getenv("PGPASSWORD"),
+            "HOST": os.getenv("PGHOST"),
+            "PORT": os.getenv("PGPORT"),
+        },
     }
 
 logger.info(f"Database configuration: {DATABASES}")
