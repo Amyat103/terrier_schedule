@@ -34,6 +34,9 @@ class SectionSerializer(serializers.ModelSerializer):
             "end_time",
             "location",
             "is_active",
+            "professor_overall_quality",
+            "professor_difficulty",
+            "professor_link",
         ]
 
     def get_major(self, obj):

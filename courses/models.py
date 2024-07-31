@@ -1,8 +1,8 @@
-from django.db import models
 import uuid
 
+from django.db import models
 
-# Create your models here.
+
 class Course(models.Model):
     course_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     id = models.AutoField(primary_key=True)
@@ -14,6 +14,8 @@ class Course(models.Model):
     description = models.TextField()
     has_details = models.BooleanField(default=False)
     is_registerable = models.BooleanField(default=False)
+    hub_attributes = models.JSONField(null=True, blank=True)
+    units = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         return f"{self.major} {self.course_number}: {self.short_title}"
@@ -21,11 +23,8 @@ class Course(models.Model):
 
 class Section(models.Model):
     course = models.ForeignKey(
-            Course, 
-            on_delete=models.CASCADE, 
-            related_name="sections", 
-            to_field='course_id'
-        )    
+        Course, on_delete=models.CASCADE, related_name="sections", to_field="course_id"
+    )
     class_section = models.CharField(max_length=10)
     class_type = models.CharField(max_length=10)
     professor_name = models.CharField(max_length=100)
@@ -37,6 +36,9 @@ class Section(models.Model):
     end_time = models.CharField(max_length=50, null=True, blank=True)
     location = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
+    professor_overall_quality = models.FloatField(null=True, blank=True)
+    professor_difficulty = models.FloatField(null=True, blank=True)
+    professor_link = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"{self.course.short_title} - Section {self.class_section}"

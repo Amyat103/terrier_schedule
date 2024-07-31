@@ -88,6 +88,7 @@ class Command(BaseCommand):
                 uuid_course_id = str(id_to_uuid[course_id])
                 course = course_dict.get(uuid_course_id)
                 if course:
+                    section.pop("last_rmp_update", None)
                     new_section = Section(
                         course=course,
                         class_section=section["class_section"],
