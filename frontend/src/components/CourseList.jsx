@@ -11,7 +11,7 @@ function CourseList() {
   const { courses, loading, error } = useSchedule();
   const [expandedCourseId, setExpandedCourseId] = useState(null);
   const [selectedMajor, setSelectedMajor] = useState('');
-  const [courseNumber, setCourseNumber] = useState('');
+  // const [courseNumber, setCourseNumber] = useState('');
   const [generalSearch, setGeneralSearch] = useState('');
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_BATCH);
   const scrollContainerRef = useRef(null);
@@ -29,9 +29,9 @@ function CourseList() {
           const matchesMajor = selectedMajor
             ? course.major === selectedMajor
             : true;
-          const matchesCourseNumber = courseNumber
-            ? course.course_number.includes(courseNumber)
-            : true;
+          // const matchesCourseNumber = courseNumber
+          //   ? course.course_number.includes(courseNumber)
+          //   : true;
           const matchesGeneral = generalSearch
             ? `${course.major} ${course.course_number} ${course.short_title} ${course.full_title} ${course.description}`
                 .toLowerCase()
@@ -42,7 +42,7 @@ function CourseList() {
             : true;
           return (
             matchesMajor &&
-            matchesCourseNumber &&
+            // matchesCourseNumber &&
             matchesGeneral &&
             matchesRegistrable
           );
@@ -51,7 +51,7 @@ function CourseList() {
   }, [
     courses,
     selectedMajor,
-    courseNumber,
+    // courseNumber,
     generalSearch,
     showRegistrableOnly,
   ]);
@@ -93,7 +93,7 @@ function CourseList() {
 
   useEffect(() => {
     setDisplayCount(ITEMS_PER_BATCH);
-  }, [selectedMajor, courseNumber, generalSearch]);
+  }, [selectedMajor, generalSearch]);
 
   if (loading) return <div>Loading courses...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -105,22 +105,22 @@ function CourseList() {
 
   return (
     <div className='course-list h-full flex flex-col'>
-      <div className='text-xs mb-4 flex space-x-4 items-center'>
+      <div className='text-sm mb-4 flex space-x-4 items-center'>
         <CustomDropdown
           options={majors}
           value={selectedMajor}
           onChange={(major) => setSelectedMajor(major)}
         />
-        <input
+        {/* <input
           type='text'
           placeholder='Course # (e.g. 114)'
           className='p-2 border rounded'
           value={courseNumber}
           onChange={(e) => setCourseNumber(e.target.value)}
-        />
+        /> */}
         <input
           type='text'
-          placeholder='Search Name (cs132)'
+          placeholder='Search for majors and # (cs112, casph 155)'
           className='flex-grow p-2 border rounded'
           value={generalSearch}
           onChange={(e) => setGeneralSearch(e.target.value)}
