@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.db.models import JSONField
 
 
 class Course(models.Model):
@@ -15,7 +16,7 @@ class Course(models.Model):
     has_details = models.BooleanField(default=False)
     is_registerable = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
-    hub_attributes = models.JSONField(null=True, blank=True)
+    hub_attributes = JSONField(null=True, blank=True)
     units = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):

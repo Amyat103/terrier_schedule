@@ -5,6 +5,7 @@ import uuid
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection, connections, transaction
+from django.utils.timezone import make_aware
 from rest_framework import serializers
 from tqdm import tqdm
 
@@ -62,6 +63,10 @@ class Command(BaseCommand):
         id_to_uuid = {}
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop("id")
+            if "updated_at" in course:
+                course["updated_at"] = make_aware(course["updated_at"]).isoformat()
+            if "hub_attributes" in course and isinstance(course["hub_attributes"], str):
+                course["hub_attributes"] = json.loads(course["hub_attributes"])
             # course.pop("updated_at", None)
             uuid_id = uuid.uuid4()
             id_to_uuid[course_id] = uuid_id
@@ -86,6 +91,10 @@ class Command(BaseCommand):
 
         for section in tqdm(sections, total=len(sections)):
             course_id = section.get("course_id")
+            if "last_rmp_update" in section:
+                section["last_rmp_update"] = make_aware(
+                    section["last_rmp_update"]
+                ).isoformat()
             if course_id in id_to_uuid:
                 uuid_course_id = str(id_to_uuid[course_id])
                 course = course_dict.get(uuid_course_id)
@@ -104,6 +113,12 @@ class Command(BaseCommand):
                         end_time=section["end_time"],
                         location=section["location"],
                         is_active=section["is_active"],
+                        professor_overall_quality=section.get(
+                            "professor_overall_quality"
+                        ),
+                        professor_difficulty=section.get("professor_difficulty"),
+                        professor_link=section.get("professor_link"),
+                        last_rmp_update=section.get("last_rmp_update"),
                     )
                     new_sections.append(new_section)
                 else:

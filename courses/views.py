@@ -153,8 +153,6 @@ def test_email(request):
 def trigger_fetch_external_data(request):
     logger.info(f"Received {request.method} request for trigger_fetch_external_data")
     logger.info(f"Request headers: {request.headers}")
-    logger.info(f"trigger_fetch_external_data: Received {request.method} request")
-    logger.info(f"trigger_fetch_external_data: Headers: {request.headers}")
     try:
         call_command("fetch_external_data")
         update_cache_after_fetch()
@@ -163,6 +161,7 @@ def trigger_fetch_external_data(request):
         )
     except Exception as e:
         logger.error(f"Error in trigger_fetch_external_data: {str(e)}")
+        error_message = json.dumps({"error": str(e)}, cls=DjangoJSONEncoder)
         return JsonResponse(
-            {"status": "error", "message": str(e)}, encoder=DjangoJSONEncoder
+            {"status": "error", "message": json.loads(error_message)}, safe=False
         )
