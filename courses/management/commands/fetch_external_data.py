@@ -91,7 +91,7 @@ class Command(BaseCommand):
 
         for section in tqdm(sections, total=len(sections)):
             course_id = section.get("course_id")
-            if "last_rmp_update" in section:
+            if "last_rmp_update" in section and section["last_rmp_update"] is not None:
                 section["last_rmp_update"] = make_aware(
                     section["last_rmp_update"]
                 ).isoformat()
@@ -99,7 +99,6 @@ class Command(BaseCommand):
                 uuid_course_id = str(id_to_uuid[course_id])
                 course = course_dict.get(uuid_course_id)
                 if course:
-                    # section.pop("last_rmp_update", None)
                     new_section = Section(
                         course=course,
                         class_section=section["class_section"],
