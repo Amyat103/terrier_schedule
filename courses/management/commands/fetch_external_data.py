@@ -1,7 +1,9 @@
+import json
 import logging
 import uuid
 
 from django.core.management.base import BaseCommand
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection, connections, transaction
 from rest_framework import serializers
 from tqdm import tqdm

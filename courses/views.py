@@ -5,6 +5,7 @@ import os
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management import call_command
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -162,4 +163,6 @@ def trigger_fetch_external_data(request):
         )
     except Exception as e:
         logger.error(f"Error in trigger_fetch_external_data: {str(e)}")
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+        return JsonResponse(
+            {"status": "error", "message": str(e)}, encoder=DjangoJSONEncoder
+        )
