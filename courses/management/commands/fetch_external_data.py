@@ -60,7 +60,7 @@ class Command(BaseCommand):
         id_to_uuid = {}
         for course in tqdm(courses, total=len(courses)):
             course_id = course.pop("id")
-            course.pop("updated_at", None)
+            # course.pop("updated_at", None)
             uuid_id = uuid.uuid4()
             id_to_uuid[course_id] = uuid_id
             stored_course = StoredCourse(course_id=uuid_id, data=course)
@@ -88,7 +88,7 @@ class Command(BaseCommand):
                 uuid_course_id = str(id_to_uuid[course_id])
                 course = course_dict.get(uuid_course_id)
                 if course:
-                    section.pop("last_rmp_update", None)
+                    # section.pop("last_rmp_update", None)
                     new_section = Section(
                         course=course,
                         class_section=section["class_section"],
