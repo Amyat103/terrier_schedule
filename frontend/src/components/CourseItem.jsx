@@ -5,7 +5,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 
 const hubColors = {
-  "Philosophical Inquiry and Life's Meanings (PLM)": '#FF5733',
+  'Philosophical Inquiry Life (PLM)': '#FF5733',
   'Aesthetic Exploration (AEX)': '#33FF57',
   'Historical Consciousness (HCO)': '#3357FF',
   'Scientific Inquiry I (SI1)': '#FF33F5',
@@ -13,7 +13,7 @@ const hubColors = {
   'Social Inquiry I (SO1)': '#F5FF33',
   'Social Inquiry II (SO2)': '#FF8033',
   'Quantitative Reasoning I (QR1)': '#8033FF',
-  'Quantitative Reasoning II (QR2)': '#33FF80',
+  'Quantitative Reasoning II (QR2)': '#13e233',
   'The Individual in Community (IIC)': '#FF3380',
   'Global Citizenship and Intercultural Literacy (GCI)': '#80FF33',
   'Ethical Reasoning (ETR)': '#3380FF',
@@ -21,10 +21,10 @@ const hubColors = {
   'Writing, Research, and Inquiry (WRI)': '#33FF33',
   'Writing-Intensive Course (WIN)': '#3333FF',
   'Oral and/or Signed Communication (OSC)': '#FFFF33',
-  'Digital/Multimedia Expression (DME)': '#33FFFF',
+  'Digital/Multimedia Expression (DME)': '#33deff',
   'Critical Thinking (CRT)': '#FF33FF',
   'Research and Information Literacy (RIL)': '#FFAA33',
-  'Teamwork/Collaboration (TWC)': '#33FFAA',
+  'Teamwork/Collaboration (TWC)': '#2bff53',
   'Creativity/Innovation (CRI)': '#AA33FF',
 };
 
@@ -84,7 +84,12 @@ function CourseItem({ course, isExpanded, onExpand }) {
                 </span>
               ))
             ) : (
-              <span className='text-gray-700 text-sm'>No HUB attributes</span>
+              <span
+                className='px-2 py-1 rounded-full text-xs text-white inline-block mb-1'
+                style={{ backgroundColor: '#888888' }}
+              >
+                No HUB attributes
+              </span>
             )}
           </div>
         </div>
