@@ -38,11 +38,11 @@ function SectionItem({ section }) {
     if (!isDifficulty) {
       if (score > 3.5) return '#006400';
       if (score >= 2.5) return '#FFA500';
-      return '#FF0000';
+      return '#B91C1C';
     } else {
       if (score < 2.5) return '#006400';
       if (score <= 3.5) return '#FFA500';
-      return '#FF0000';
+      return '#B91C1C';
     }
   };
 
