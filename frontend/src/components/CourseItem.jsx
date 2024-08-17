@@ -28,6 +28,13 @@ const hubColors = {
   'Creativity/Innovation (CRI)': '#AA33FF',
 };
 
+const getHubColor = (attr) => {
+  const colorKey = Object.keys(hubColors).find((key) =>
+    key.toLowerCase().startsWith(attr.toLowerCase())
+  );
+  return colorKey ? hubColors[colorKey] : '#888888';
+};
+
 function CourseItem({ course, isExpanded, onExpand }) {
   return (
     <div className='course-item border rounded mb-2 relative'>
@@ -65,19 +72,21 @@ function CourseItem({ course, isExpanded, onExpand }) {
       >
         <div className='px-4 pb-4'>
           <h4 className='font-bold text-sm mt-2 mb-1'>HUB</h4>
-          {course.hub_attributes && course.hub_attributes.length > 0 ? (
-            course.hub_attributes.map((attr, index) => (
-              <span
-                key={index}
-                className='px-2 py-1 rounded-full text-xs text-white'
-                style={{ backgroundColor: hubColors[attr] || '#888888' }}
-              >
-                {attr}
-              </span>
-            ))
-          ) : (
-            <span className='text-gray-700 text-sm'>No HUB attributes</span>
-          )}
+          <div className='flex flex-wrap gap-2'>
+            {course.hub_attributes && course.hub_attributes.length > 0 ? (
+              course.hub_attributes.map((attr, index) => (
+                <span
+                  key={index}
+                  className='px-2 py-1 rounded-full text-xs text-white inline-block mb-1'
+                  style={{ backgroundColor: getHubColor(attr) }}
+                >
+                  {attr}
+                </span>
+              ))
+            ) : (
+              <span className='text-gray-700 text-sm'>No HUB attributes</span>
+            )}
+          </div>
         </div>
         <div className='px-4 pb-4'>
           <h4 className='font-bold text-sm mt-2 mb-1'>Description</h4>
