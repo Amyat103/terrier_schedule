@@ -1,6 +1,6 @@
 import { useSchedule } from '../context/ScheduleContext';
 import PropTypes from 'prop-types';
-import rmpLogo from '../../../assets/rmp_logo.svg';
+import rmpLogo from '../../../assets/rmp_logo.svg?v=1';
 
 const ExternalLinkIcon = () => (
   <svg
@@ -33,11 +33,17 @@ function SectionItem({ section }) {
     return 'text-orange-500';
   };
 
-  const getRatingColor = (score) => {
+  const getRatingColor = (score, isDifficulty = false) => {
     if (score === null || score === undefined) return '#888888';
-    if (score > 3.5) return '#006400';
-    if (score >= 2.5) return '#FFA500';
-    return '#FF0000';
+    if (!isDifficulty) {
+      if (score > 3.5) return '#006400';
+      if (score >= 2.5) return '#FFA500';
+      return '#FF0000';
+    } else {
+      if (score < 2.5) return '#006400';
+      if (score <= 3.5) return '#FFA500';
+      return '#FF0000';
+    }
   };
 
   const handleToggle = () => {
@@ -77,7 +83,8 @@ function SectionItem({ section }) {
                 className='px-2 py-1 rounded-full text-xs text-white inline-block'
                 style={{
                   backgroundColor: getRatingColor(
-                    section.professor_overall_quality
+                    section.professor_overall_quality,
+                    false
                   ),
                 }}
               >
@@ -86,7 +93,10 @@ function SectionItem({ section }) {
               <span
                 className='px-2 py-1 rounded-full text-xs text-white inline-block'
                 style={{
-                  backgroundColor: getRatingColor(section.professor_difficulty),
+                  backgroundColor: getRatingColor(
+                    section.professor_difficulty,
+                    true
+                  ),
                 }}
               >
                 Difficulty: {section.professor_difficulty.toFixed(1)}
