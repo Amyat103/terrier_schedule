@@ -1,6 +1,25 @@
-import React from 'react';
 import { useSchedule } from '../context/ScheduleContext';
 import PropTypes from 'prop-types';
+import rmpLogo from '../../../assets/rmp_logo.svg';
+
+const ExternalLinkIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='12'
+    height='12'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+    className='inline-block ml-1'
+  >
+    <path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'></path>
+    <polyline points='15 3 21 3 21 9'></polyline>
+    <line x1='10' y1='14' x2='21' y2='3'></line>
+  </svg>
+);
 
 function SectionItem({ section }) {
   const { addCourse, removeCourse, selectedCourses } = useSchedule();
@@ -48,7 +67,10 @@ function SectionItem({ section }) {
           {section.professor_name}
         </p>
         <div>
-          <p className='font-semibold'>Rate My Professor:</p>
+          <p className='font-semibold flex items-center'>
+            Rate My Professor
+            <img src={rmpLogo} alt='RMP Logo' className='h-4 ml-1' />
+          </p>
           {hasRmpData ? (
             <div className='flex flex-wrap gap-2 mt-1'>
               <span
@@ -76,7 +98,8 @@ function SectionItem({ section }) {
                   rel='noopener noreferrer'
                   className='text-blue-600 hover:underline'
                 >
-                  Link
+                  RMP Link
+                  <ExternalLinkIcon />
                 </a>
               )}
             </div>
