@@ -9,6 +9,8 @@ Terrier Schedule is a web application designed to help Boston University student
 - Browse available courses
 - View detailed course information
 - Add courses to your schedule
+- Rate My Professor quality and difficulty for all professors
+- HUB tags for all courses
 - Visualize your weekly schedule
 - Filter courses by major, course number, and other criteria
 

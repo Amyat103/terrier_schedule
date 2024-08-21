@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import CourseList from './components/CourseList';
 import { useSchedule } from './context/ScheduleContext';
 import rhett from '../assets/rhett.png';

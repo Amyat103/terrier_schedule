@@ -37,11 +37,11 @@ function SectionItem({ section }) {
     if (score === null || score === undefined) return '#888888';
     if (!isDifficulty) {
       if (score > 3.5) return '#006400';
-      if (score >= 2.5) return '#FFA500';
+      if (score >= 2.5) return '#ff9c00';
       return '#B91C1C';
     } else {
       if (score < 2.5) return '#006400';
-      if (score <= 3.5) return '#FFA500';
+      if (score <= 3.5) return '#ff9c00';
       return '#B91C1C';
     }
   };
