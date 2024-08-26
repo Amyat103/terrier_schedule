@@ -2,7 +2,7 @@
 
 ![Terrier Schedule](assets/terrier_schedule.png)
 
-Terrier Schedule is a web application designed to help Boston University students plan their course schedules efficiently. Currently have 300 users.
+Terrier Schedule is a web application designed to help Boston University students plan their course schedules efficiently. Currently have 500 users.
 
 ## Features
 
@@ -79,3 +79,8 @@ Email: amyat@bu.edu
 ## Contact
 
 For any questions or feedback, please contact us at [amyat@bu.edu](amyat@bu.edu).
+
+## Upcoming Feature
+
+- Rating system for classes
+- Dorm rating
