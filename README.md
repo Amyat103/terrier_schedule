@@ -84,3 +84,4 @@ For any questions or feedback, please contact us at [amyat@bu.edu](amyat@bu.edu)
 
 - Rating system for classes
 - Dorm rating
+- Check for grad schedule
