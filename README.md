@@ -82,6 +82,7 @@ For any questions or feedback, please contact us at [amyat@bu.edu](amyat@bu.edu)
 
 ## Upcoming Feature
 
+- TODO: upcoming spring semester class
 - Rating system for classes
 - Dorm rating
 - Check for grad schedule
