@@ -4,6 +4,8 @@ import { MemoizedCourseItem } from './CourseItem';
 import CustomDropdown from './CustomDropdown';
 import ToggleButton from './ToggleButton';
 // import { faBullseye } from '@fortawesome/free-solid-svg-icons';
+import './CourseList.css';
+import rhettImage from '../../assets/rhett.png';
 
 const ITEMS_PER_BATCH = 20;
 
@@ -95,7 +97,17 @@ function CourseList() {
     setDisplayCount(ITEMS_PER_BATCH);
   }, [selectedMajor, generalSearch]);
 
-  if (loading) return <div>Loading courses...</div>;
+  //   if (loading) return <div>Loading courses...</div>;
+  if (loading)
+    return (
+      <div className='loading-container'>
+        <img src={rhettImage} alt='Loading' className='loading-image' />
+        <div className='loading-text'>
+          Loading Courses<span className='loading-dots'></span>
+        </div>
+      </div>
+    );
+
   if (error) return <div>Error: {error}</div>;
   if (!Array.isArray(courses))
     return (
