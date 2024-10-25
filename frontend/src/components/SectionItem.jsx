@@ -28,7 +28,7 @@ function SectionItem({ section }) {
     (section.enrollment_available / section.class_capacity) * 100;
 
   const getAvailabilityColor = () => {
-    if (availabilityPercentage >= 70) return 'text-red-700';
+    if (availabilityPercentage >= 70) return 'text-green-700';
     if (availabilityPercentage <= 30) return 'text-red-700';
     return 'text-orange-500';
   };
