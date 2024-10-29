@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { MemoizedSectionList } from './SectionList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
@@ -36,6 +36,39 @@ const getHubColor = (attr) => {
 };
 
 function CourseItem({ course, isExpanded, onExpand }) {
+  const contentRef = useRef(null);
+  const [contentHeight, setContentHeight] = useState('0px');
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      try {
+        if (contentRef.current) {
+          const height = isExpanded
+            ? `${contentRef.current.scrollHeight}px`
+            : '0px';
+          setContentHeight(height);
+        }
+      } catch (error) {
+        console.error('Error in height calculation:', error);
+        setContentHeight(isExpanded ? 'auto' : '0px');
+      }
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
+    return () => window.removeEventListener('resize', updateHeight);
+  }, [isExpanded]);
+
+  if (hasError) {
+    return (
+      <div className='course-item border rounded mb-2 p-2'>
+        <div className='text-red-600'>Error loading course information</div>
+      </div>
+    );
+  }
+
   return (
     <div className='course-item border rounded mb-2 relative'>
       <div
@@ -66,9 +99,9 @@ function CourseItem({ course, isExpanded, onExpand }) {
         </div>
       </div>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[2000px]' : 'max-h-0'
-        }`}
+        ref={contentRef}
+        style={{ height: contentHeight }}
+        className='overflow-hidden transition-all duration-300 ease-in-out'
       >
         <div className='px-4 pb-4'>
           <h4 className='font-bold text-sm mt-2 mb-1'>HUB</h4>
