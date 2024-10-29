@@ -48,9 +48,21 @@ function SectionItem({ section }) {
 
   const handleToggle = () => {
     if (isSelected) {
-      removeCourse(section.id);
+      section.timeSlots.forEach((slot) => {
+        removeCourse(slot.id);
+      });
     } else {
-      addCourse(section);
+      section.timeSlots.forEach((slot) => {
+        const courseData = {
+          ...section,
+          id: slot.id,
+          days: slot.days,
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+          location: slot.location,
+        };
+        addCourse(courseData);
+      });
     }
   };
 
@@ -117,13 +129,16 @@ function SectionItem({ section }) {
             <p className='text-gray-500 text-xs'>Not Available</p>
           )}
         </div>
-        <p>
-          <span className='font-semibold'>Time:</span> {section.days}{' '}
-          {section.start_time} - {section.end_time}
-        </p>
-        <p>
-          <span className='font-semibold'>Location:</span> {section.location}
-        </p>
+        <div>
+          <span className='font-semibold'>Time Slots:</span>
+          {section.timeSlots.map((slot, index) => (
+            <p key={slot.id} className='ml-2'>
+              {slot.days} {slot.start_time} - {slot.end_time}
+              <br />
+              <span className='text-gray-600'>Location: {slot.location}</span>
+            </p>
+          ))}
+        </div>
         <p>
           <span className='font-semibold'>Availability:</span>{' '}
           <span className={getAvailabilityColor()}>
@@ -151,10 +166,16 @@ SectionItem.propTypes = {
     class_section: PropTypes.string.isRequired,
     class_type: PropTypes.string.isRequired,
     professor_name: PropTypes.string.isRequired,
-    days: PropTypes.string.isRequired,
-    start_time: PropTypes.string,
-    end_time: PropTypes.string,
-    location: PropTypes.string.isRequired,
+    timeSlots: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+          .isRequired,
+        days: PropTypes.string.isRequired,
+        start_time: PropTypes.string.isRequired,
+        end_time: PropTypes.string.isRequired,
+        location: PropTypes.string.isRequired,
+      })
+    ).isRequired,
     enrollment_available: PropTypes.number.isRequired,
     class_capacity: PropTypes.number.isRequired,
     professor_overall_quality: PropTypes.number,
