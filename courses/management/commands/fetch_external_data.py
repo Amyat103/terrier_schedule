@@ -37,6 +37,11 @@ class Command(BaseCommand):
         )
 
     def fetch_external_data(self):
+        db_settings = connections["online"].settings_dict
+        self.stdout.write(
+            f"Connecting to: {db_settings['HOST']}:{db_settings['PORT']} - {db_settings['NAME']}"
+        )
+
         with connections["online"].cursor() as cursor:
             cursor.execute("SELECT * FROM courses")
             columns = [col[0] for col in cursor.description]

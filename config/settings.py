@@ -50,21 +50,29 @@ else:
 
 if DEBUG:
     DATABASES = {
+        # "default": {
+        #     "ENGINE": "django.db.backends.postgresql",
+        #     "NAME": "local_terrier_schedule",
+        #     "USER": "postgres",
+        #     "PASSWORD": os.environ.get("LOCAL_PASS"),
+        #     "HOST": "localhost",
+        #     "PORT": "5432",
+        # },
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "local_terrier_schedule",
-            "USER": "postgres",
-            "PASSWORD": os.environ.get("LOCAL_PASS"),
-            "HOST": "localhost",
-            "PORT": "5432",
-        },
-        "online": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": os.getenv("PGDATABASE"),
             "USER": os.getenv("PGUSER"),
             "PASSWORD": os.getenv("PGPASSWORD"),
             "HOST": os.getenv("PGHOST"),
             "PORT": os.getenv("PGPORT"),
+        },
+        "online": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("SCRAPER_DB_NAME"),
+            "USER": os.getenv("SCRAPER_DB_USER"),
+            "PASSWORD": os.getenv("SCRAPER_DB_PASSWORD"),
+            "HOST": os.getenv("SCRAPER_DB_HOST"),
+            "PORT": os.getenv("SCRAPER_DB_PORT"),
         },
     }
 else:
@@ -75,11 +83,11 @@ else:
         ),
         "online": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("PGDATABASE"),
-            "USER": os.getenv("PGUSER"),
-            "PASSWORD": os.getenv("PGPASSWORD"),
-            "HOST": os.getenv("PGHOST"),
-            "PORT": os.getenv("PGPORT"),
+            "NAME": os.getenv("SCRAPER_DB_NAME"),
+            "USER": os.getenv("SCRAPER_DB_USER"),
+            "PASSWORD": os.getenv("SCRAPER_DB_PASSWORD"),
+            "HOST": os.getenv("SCRAPER_DB_HOST"),
+            "PORT": os.getenv("SCRAPER_DB_PORT"),
         },
     }
 
