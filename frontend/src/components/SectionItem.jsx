@@ -1,6 +1,6 @@
 import { useSchedule } from '../context/ScheduleContext';
 import PropTypes from 'prop-types';
-import rmpLogo from '../../assets/rmp_logo.svg?v=1';
+import rmpLogo from '../assets/rmp_logo.svg?v=1';
 
 const ExternalLinkIcon = () => (
   <svg

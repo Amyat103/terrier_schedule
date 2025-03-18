@@ -1,3 +1,5 @@
+--no-cache-dir
+--use-pep517
 asgiref==3.8.1
 autopep8==2.3.1
 black==24.4.2
@@ -25,5 +27,5 @@ requests==2.32.3
 sqlparse==0.5.1
 tqdm==4.66.4
 typing_extensions==4.12.2
-urllib3==2.2.2
+urllib3==1.26.15
 whitenoise==6.7.0
